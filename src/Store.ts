@@ -156,6 +156,7 @@ export interface FormatState {
     showUploadButton: boolean;
     strings: Strings;
     carouselMargin: number;
+    botIconUrl: string;
 }
 
 export type FormatAction = {
@@ -170,6 +171,9 @@ export type FormatAction = {
 } | {
     type: 'Toggle_Upload_Button',
     showUploadButton: boolean
+} | {
+    type: 'Set_BotIcon_Url',
+    botIconUrl: string
 };
 
 export const format: Reducer<FormatState> = (
@@ -178,7 +182,8 @@ export const format: Reducer<FormatState> = (
         locale: 'en-us',
         showUploadButton: true,
         strings: defaultStrings,
-        carouselMargin: undefined
+        carouselMargin: undefined,
+        botIconUrl: undefined
     },
     action: FormatAction
 ) => {
@@ -203,6 +208,11 @@ export const format: Reducer<FormatState> = (
             return {
                 ...state,
                 showUploadButton: action.showUploadButton
+            };
+        case 'Set_BotIcon_Url':
+            return {
+                ...state,
+                botIconUrl: action.botIconUrl
             };
         default:
             return state;

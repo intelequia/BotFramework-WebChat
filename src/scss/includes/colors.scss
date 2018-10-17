@@ -7,8 +7,9 @@ $c04: #999999;
 $c05: #cccccc;
 $c06: #767676; // used for timestamp under chat bubbles
 $c07: #0078d7;
+//$c07: #ed823c;
 $c08: #808c95;
-$c09: #eceff1;
+$c09: #f1f1f4;
 $c10: #dbdee1;
 $c11: #d2dde5;
 $c12: #ffa333;
@@ -19,6 +20,7 @@ $c_shadow: $c02;
 $c_chrome: $c10;
 $c_textHeading: $c08;
 $c_textLight: $c04;
+$c_textLink: $c07;
 
 $c_messageFromMe: $c_brand;
 $c_messageFromThem: $c09;

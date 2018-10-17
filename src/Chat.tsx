@@ -29,6 +29,7 @@ export interface ChatProps {
     showUploadButton?: boolean;
     speechOptions?: SpeechOptions;
     user: User;
+    botIconUrl: string;
 }
 
 import { History } from './History';
@@ -87,6 +88,10 @@ export class Chat extends React.Component<ChatProps, {}> {
 
         if (typeof chatTitle !== 'undefined') {
             this.store.dispatch<ChatActions>({ type: 'Set_Chat_Title', chatTitle });
+        }
+
+        if (typeof props.botIconUrl !== 'undefined') {
+            this.store.dispatch<ChatActions>({ type: 'Set_BotIcon_Url', botIconUrl: props.botIconUrl });
         }
 
         this.store.dispatch<ChatActions>({ type: 'Toggle_Upload_Button', showUploadButton: props.showUploadButton !== false });
@@ -289,6 +294,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                     {
                         !!state.format.chatTitle &&
                             <div className="wc-header">
+                                <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div>
                                 <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
                             </div>
                     }

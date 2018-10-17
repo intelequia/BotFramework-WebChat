@@ -34,19 +34,33 @@
     }
 
     .wc-header {
-        background-color: $c_brand;
+        background-color: $c01;
         box-shadow: 0 1px $c_shadow;
         box-sizing: content-box;
-        color: $c01;
-        font-weight: 500;
+        color: $c00;
         height: $headerTotalHeight - $headerPaddingTop - $headerPaddingBottom;
         left: 0;
-        letter-spacing: 0.5px;
+        //letter-spacing: 0.5px;
         padding: $headerPaddingTop $headerPaddingRight $headerPaddingBottom $headerPaddingLeft;
         position: absolute;
         right: 0;
         top: 0;
         z-index: 1;
+        display: flex;
+        align-items: center;
+
+        .bot-icon {
+            min-height: 34px;
+            min-width: 34px;
+            height: 34px;
+            max-width: 34px;
+            background-size: cover;
+            margin-left: 8px;
+        }
+
+        span {
+            margin-left: 8px;
+        }
     }
 
     .wc-time {
@@ -62,6 +76,7 @@
         overflow-x: hidden;
         overflow-y: scroll;
         padding: 10px;
+        margin-bottom: 20px;
         position: absolute;
         right: 0;
         top: $headerTotalHeight;
@@ -89,6 +104,7 @@
         position: absolute;
         right: 0;
         transition: height $actionTransition;
+        margin-bottom: 15px;
 
         &.disabled {
             bottom: 0;
@@ -112,13 +128,17 @@
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     width: 100%;
+                    border-radius: 5px;
                 }
 
                 button:focus,
                 button:hover {
-                    background-color: #fff;
+                    // background-color: #fff;
+                    // border-color: $c_brand;
+                    // color: $c_brand;
+                    background-color: $c_brand;
                     border-color: $c_brand;
-                    color: $c_brand;
+                    color: $c01;
                 }
 
                 button:active {
@@ -130,13 +150,15 @@
         }
 
         button.scroll {
-            background-color: $c11;
+            background-color: $c09;
             height: $actionsHeight;
             overflow: hidden;
             padding: 0;
             position: absolute;
             top: 0;
-            width: 28px;
+            width: 38px;
+            height: 100%;
+            border-radius: 50%;
         }
 
         button.scroll:disabled {
@@ -145,11 +167,16 @@
 
         button.scroll:focus,
         button.scroll:hover {
-            background-color: $c08;
+            background-color: $c07;
+            border-color: $c07;
+
+            svg {
+                fill: $c01;
+            }
         }
 
         button.scroll svg {
-            fill: $c01;
+            fill: $c08;
 
             //TODO: use proper svg coords in the path data
             path {
@@ -159,10 +186,12 @@
 
         button.scroll.previous {
             left: 0;
+            padding-left: 3px;
         }
 
         button.scroll.next {
             right: 0;
+            padding-left: 3px;
         }
     }
 
@@ -179,15 +208,21 @@
 /* views */
 
     .wc-chatview-panel {
+        background-color: #fff;
         overflow: hidden;
         position: absolute;
         right: 0;
         left: 0;
         top: 0;
         bottom: 0;
+        border-radius: 7px;
     }
 
 /* messages */
+
+    .icon-and-message {
+        display: flex;
+    }
 
     .wc-message-wrapper {
         animation: animationFrames 2s;
@@ -197,6 +232,11 @@
         overflow: hidden;
         position: relative;
         /*transition: max-height 2s ease-in-out;*/
+
+        .bot-icon {
+            float: left !important;
+            border-radius: 50%;
+        }
     }
 
     @keyframes animationFrames{
@@ -240,7 +280,7 @@
     }
 
     .wc-message-content {
-        border-radius: 2px;
+        border-radius: 8px;
         box-shadow: 0px 1px 1px 0px $c_shadow;
         padding: 8px;
         word-break: break-word;
@@ -278,24 +318,24 @@
 
     .wc-card {
 
-        background-color: $c01;
-
         .non-adaptive-content {
             margin: $card_padding $card_padding 0 $card_padding;
         }
 
         button {
-            background-color: transparent;
+            // background-color: transparent;
+            background-color: $c01;
             color: $c_brand;
             min-height: 32px;
             width: 100%;
             padding: 0 16px;
+            border-radius: 5px;
         }
 
         button:hover {
-            background-color: transparent;
+            background-color: $c_brand;
             border-color: $c_brand;
-            color: $c_brand;
+            color: $c01;
         }
 
         button:active {
@@ -405,7 +445,7 @@
 /* alternate chat sizes */
 
     .wc-message {
-        max-width: 91%;
+        max-width: 87%;
     }
 
     @include card-size($card_normal);
@@ -473,6 +513,7 @@
             position: absolute;
             top: 50%;
             width: 28px;
+            border-radius: 50%;
         }
 
         button.scroll:disabled {
@@ -481,10 +522,17 @@
 
         button.scroll:focus,
         button.scroll:hover {
-            background-color:  $c08;
+            background-color: $c07;
+            border-color: $c07;
         }
 
         button.scroll svg {
+            fill: $c08;
+            padding-left: 0;
+        }
+
+        button.scroll:focus svg,
+        button.scroll:hover svg {
             fill: $c01;
         }
 
@@ -559,7 +607,16 @@
 
     .wc-message-from-bot .wc-message-content {
         background-color: $c_messageFromThem;
-        color: $c00;
+        color: $c_textHeading;
+
+        p {
+            color: $c_textHeading;
+        }
+
+        a {
+            text-decoration: none;
+            color: $c_textLink;
+        }
     }
 
     .wc-message-from-bot svg.wc-message-callout path {
@@ -577,7 +634,11 @@
 /* console */
 
     .wc-console {
-        border: 5px solid $c_chrome;
+        background-color: $c09;
+        padding: 5px;
+        margin: 10px;
+        border-radius: 5px;
+        // border: 5px solid $c_chrome;
         bottom: 0;
         box-sizing: border-box;
         height: $consoleHeight;
@@ -642,6 +703,7 @@
 
         .wc-send {
             right: 0;
+            height: 100%;
         }
 
         .wc-send.hidden {
