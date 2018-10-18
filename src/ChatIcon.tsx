@@ -40,8 +40,9 @@ export class ChatIcon extends React.Component<ChatProps, {}> {
         if (state.windowState.visible) {
             return (
                 <Provider store={ this.store }>
-                    <Chat { ...this.props }
-                          onCloseWindow={this.onCloseWindow.bind(this)}
+                    <Chat
+                        { ...this.props }
+                        onCloseWindow={this.onCloseWindow.bind(this)}
                     />
                 </Provider>
             );

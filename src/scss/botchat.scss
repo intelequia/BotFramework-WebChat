@@ -33,6 +33,16 @@
     z-index: 1000;
 }
 
+.ac-image {
+    height: 210px;
+    overflow-y: hidden;
+
+    img {
+        height: 200px;
+        object-fit: cover;
+    }
+}
+
 /* reset */
 
     body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
