@@ -56,6 +56,7 @@
             max-width: 34px;
             background-size: cover;
             margin-left: 8px;
+            margin-right: 8px;
         }
 
         span {
@@ -236,6 +237,10 @@
         .bot-icon {
             float: left !important;
             border-radius: 50%;
+            margin-right: 8px;
+            width: 32px;
+            height: 32px;
+            background-size: contain;
         }
     }
 
@@ -312,6 +317,7 @@
         color: $c_timestamp;
         font-size: 11px;
         margin-top: 5px;
+        margin-left: 42px;
     }
 
 /* cards */
@@ -602,7 +608,7 @@
 
     .wc-message-from-bot {
         float: left;
-        margin-left: 8px;
+        // margin-left: 8px;
     }
 
     .wc-message-from-bot .wc-message-content {

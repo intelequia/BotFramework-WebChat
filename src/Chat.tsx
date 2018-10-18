@@ -283,6 +283,7 @@ export class Chat extends React.Component<ChatProps, {}> {
         const state = this.store.getState();
         konsole.log('BotChat.Chat state', state);
 
+        const botIcon = state.format.botIconUrl ? <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div> : <div></div>;
         // only render real stuff after we know our dimensions
         return (
             <Provider store={ this.store }>
@@ -294,7 +295,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                     {
                         !!state.format.chatTitle &&
                             <div className="wc-header">
-                                <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div>
+                                {botIcon}
                                 <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
                             </div>
                     }
