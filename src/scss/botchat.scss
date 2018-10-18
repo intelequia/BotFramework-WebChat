@@ -2,6 +2,37 @@
 @import "includes/settings";
 @import "includes/card-size";
 
+.chat-button {
+    margin: 10px;
+    position: fixed;
+    bottom: 30px;
+    right: 10px;
+    z-index: 1000000;
+    // background-color: rgb(217, 83, 79);
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 6px 20px rgba(0,0,0,.2);
+}
+
+.chat-button-icon span {
+    width: 32px;
+    padding: 16px 14px 14px 14px;
+    display: flex;
+    align-items: center;
+}
+
+.chat-window {
+    width: 400px;
+    height: 590px;
+    margin: 10px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 1000;
+}
+
 /* reset */
 
     body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
@@ -61,9 +92,15 @@
 
         span {
             margin-left: 8px;
+            flex: 1;
         }
     }
 
+    .chat-close-button {
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+    }
     .wc-time {
         color: $c_textLight;
         margin-bottom: 10px;

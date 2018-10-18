@@ -157,6 +157,7 @@ export interface FormatState {
     strings: Strings;
     carouselMargin: number;
     botIconUrl: string;
+    chatIconColor: string;
 }
 
 export type FormatAction = {
@@ -174,6 +175,9 @@ export type FormatAction = {
 } | {
     type: 'Set_BotIcon_Url',
     botIconUrl: string
+} | {
+    type: 'Set_ChatIcon_Color',
+    chatIconColor: string
 };
 
 export const format: Reducer<FormatState> = (
@@ -183,7 +187,8 @@ export const format: Reducer<FormatState> = (
         showUploadButton: true,
         strings: defaultStrings,
         carouselMargin: undefined,
-        botIconUrl: undefined
+        botIconUrl: undefined,
+        chatIconColor: '#d9534f'
     },
     action: FormatAction
 ) => {
@@ -214,6 +219,11 @@ export const format: Reducer<FormatState> = (
                 ...state,
                 botIconUrl: action.botIconUrl
             };
+        case 'Set_ChatIcon_Color':
+            return {
+                ...state,
+                chatIconColor: action.chatIconColor
+            };
         default:
             return state;
     }
@@ -243,6 +253,30 @@ export const size: Reducer<SizeState> = (
                 ...state,
                 width: action.width,
                 height: action.height
+            };
+        default:
+            return state;
+    }
+};
+
+export interface WindowState {
+    visible: boolean;
+}
+export interface WindowAction {
+    type: 'Set_Status';
+    visible: boolean;
+}
+export const windowState: Reducer<WindowState> = (
+    state: WindowState = {
+        visible: false
+    },
+    action: WindowAction
+) => {
+    switch (action.type) {
+        case 'Set_Status':
+            return {
+                ...state,
+                visible: action.visible
             };
         default:
             return state;
@@ -493,7 +527,7 @@ export const adaptiveCards: Reducer<AdaptiveCardsState> = (
     }
 };
 
-export type ChatActions = ShellAction | FormatAction | SizeAction | ConnectionAction | HistoryAction | AdaptiveCardsAction;
+export type ChatActions = ShellAction | FormatAction | SizeAction | ConnectionAction | HistoryAction | AdaptiveCardsAction | WindowAction;
 
 const nullAction = { type: null } as ChatActions;
 
@@ -504,6 +538,7 @@ export interface ChatState {
     history: HistoryState;
     shell: ShellState;
     size: SizeState;
+    windowState: WindowState;
 }
 
 const speakFromMsg = (msg: Message, fallbackLocale: string) => {
@@ -725,7 +760,8 @@ export const createStore = () =>
             format,
             history,
             shell,
-            size
+            size,
+            windowState
         }),
         applyMiddleware(createEpicMiddleware(combineEpics(
             updateSelectedActivityEpic,

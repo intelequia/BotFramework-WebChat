@@ -11,7 +11,7 @@ import { getTabIndex } from './getTabIndex';
 import * as konsole from './Konsole';
 import { Speech } from './SpeechModule';
 import { SpeechOptions } from './SpeechOptions';
-import { ChatActions, createStore, sendMessage } from './Store';
+import { ChatActions, createStore, sendMessage, WindowState } from './Store';
 import { ActivityOrID, FormatOptions } from './Types';
 
 export interface ChatProps {
@@ -30,6 +30,9 @@ export interface ChatProps {
     speechOptions?: SpeechOptions;
     user: User;
     botIconUrl: string;
+    chatIconColor: string;
+    windowStatus: WindowState;
+    onCloseWindow: React.MouseEventHandler<HTMLDivElement>;
 }
 
 import { History } from './History';
@@ -67,6 +70,11 @@ export class Chat extends React.Component<ChatProps, {}> {
         this.store.dispatch<ChatActions>({
             type: 'Set_Locale',
             locale: props.locale || (window.navigator as any).userLanguage || window.navigator.language || 'en'
+        });
+
+        this.store.dispatch<ChatActions>({
+            type: 'Set_Status',
+            visible: false
         });
 
         if (props.adaptiveCardsHostConfig) {
@@ -284,6 +292,11 @@ export class Chat extends React.Component<ChatProps, {}> {
         konsole.log('BotChat.Chat state', state);
 
         const botIcon = state.format.botIconUrl ? <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div> : <div></div>;
+        const closeButton = <div onClick={this.props.onCloseWindow} className="chat-close-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+                                    <path d="M1115 1024 L1658 1567 Q1677 1586 1677 1612.5 Q1677 1639 1658 1658 Q1639 1676 1612 1676 Q1587 1676 1567 1658 L1024 1115 L481 1658 Q462 1676 436 1676 Q410 1676 390 1658 Q371 1639 371 1612.5 Q371 1586 390 1567 L934 1024 L390 481 Q371 462 371 435.5 Q371 409 390 390 Q410 372 436 372 Q462 372 481 390 L1024 934 L1567 390 Q1587 372 1612 372 Q1639 372 1658 390 Q1677 409 1677 435.5 Q1677 462 1658 481 L1115 1024 Z "></path>
+                                </svg>
+                            </div>;
         // only render real stuff after we know our dimensions
         return (
             <Provider store={ this.store }>
@@ -297,6 +310,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                             <div className="wc-header">
                                 {botIcon}
                                 <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
+                                {closeButton}
                             </div>
                     }
                     <MessagePane disabled={ this.props.disabled }>
