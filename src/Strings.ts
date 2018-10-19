@@ -14,6 +14,7 @@ export interface Strings {
     listeningIndicator: string;
     uploadFile: string;
     speak: string;
+    anonymousUsername: string;
 }
 
 interface LocalizedStrings {
@@ -36,7 +37,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Type your message...',
         listeningIndicator: 'Listening...',
         uploadFile: 'Upload file',
-        speak: 'Speak'
+        speak: 'Speak',
+        anonymousUsername: 'Anonymous'
     },
     'ja-jp': {
         title: 'チャット',
@@ -53,7 +55,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'メッセージを入力してください...',
         listeningIndicator: '聴いてます...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: '匿名'
     },
     'nb-no': {
         title: 'Chat',
@@ -70,7 +73,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Skriv inn melding...',
         listeningIndicator: 'Lytter...',
         uploadFile: 'Last opp fil',
-        speak: 'Snakk'
+        speak: 'Snakk',
+        anonymousUsername: 'Anonym'
     },
     'da-dk': {
         title: 'Chat',
@@ -87,7 +91,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Skriv din besked...',
         listeningIndicator: 'Lytter...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anonym'
     },
     'de-de': {
         title: 'Chat',
@@ -104,7 +109,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Verfasse eine Nachricht...',
         listeningIndicator: 'Hören...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anonym'
     },
     'pl-pl': {
         title: 'Chat',
@@ -121,7 +127,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Wpisz swoją wiadomość...',
         listeningIndicator: 'Słuchanie...',
         uploadFile: 'Wyślij plik',
-        speak: 'Mów'
+        speak: 'Mów',
+        anonymousUsername: 'anonimowy'
     },
     'ru-ru': {
         title: 'Чат',
@@ -138,7 +145,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Введите ваше сообщение...',
         listeningIndicator: 'прослушивание...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'анонимное'
     },
     'nl-nl': {
         title: 'Chat',
@@ -155,7 +163,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Typ je bericht...',
         listeningIndicator: 'Aan het luisteren...',
         uploadFile: 'Bestand uploaden',
-        speak: 'Spreek'
+        speak: 'Spreek',
+        anonymousUsername: 'Anoniem'
     },
     'lv-lv': {
         title: 'Tērzēšana',
@@ -172,7 +181,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Ierakstiet savu ziņu...',
         listeningIndicator: 'Klausoties...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anonīms'
     },
     'pt-br': {
         title: 'Bate-papo',
@@ -189,7 +199,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Digite sua mensagem...',
         listeningIndicator: 'Ouvindo...',
         uploadFile: 'Subir arquivo',
-        speak: 'Falar'
+        speak: 'Falar',
+        anonymousUsername: 'Anônimo'
     },
     'fr-fr': {
         title: 'Chat',
@@ -206,7 +217,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Écrivez votre message...',
         listeningIndicator: 'Écoute...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anonyme'
     },
     'es-es': {
         title: 'Chat',
@@ -223,7 +235,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Escribe tu mensaje...',
         listeningIndicator: 'Escuchando...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anónimo'
     },
     'el-gr': {
         title: 'Συνομιλία',
@@ -240,7 +253,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Πληκτρολόγηση μηνύματος...',
         listeningIndicator: 'Ακούγοντας...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Ανώνυμος'
     },
     'it-it': {
         title: 'Chat',
@@ -257,7 +271,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Scrivi il tuo messaggio...',
         listeningIndicator: 'Ascoltando...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anonimo'
     },
     'zh-hans': {
         title: '聊天',
@@ -274,7 +289,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: '输入你的消息...',
         listeningIndicator: '正在倾听...',
         uploadFile: '上传文件',
-        speak: '发言'
+        speak: '发言',
+        anonymousUsername: 'Anonymous'
     },
     'zh-hant': {
         title: '聊天',
@@ -291,7 +307,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: '輸入你的訊息...',
         listeningIndicator: '正在聆聽...',
         uploadFile: '上載檔案',
-        speak: '發言'
+        speak: '發言',
+        anonymousUsername: 'Anonymous'
     },
     'zh-yue': {
         title: '傾偈',
@@ -308,7 +325,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: '輸入你嘅訊息...',
         listeningIndicator: '聽緊你講嘢...',
         uploadFile: '上載檔案',
-        speak: '講嘢'
+        speak: '講嘢',
+        anonymousUsername: 'Anonymous'
     },
     'cs-cz': {
         title: 'Chat',
@@ -325,7 +343,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Napište svou zprávu...',
         listeningIndicator: 'Poslouchám...',
         uploadFile: 'Nahrát soubor',
-        speak: 'Použít hlas'
+        speak: 'Použít hlas',
+        anonymousUsername: 'Anonymous'
     },
     'ko-kr': {
         title: '채팅',
@@ -342,7 +361,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: '메세지를 입력하세요...',
         listeningIndicator: '수신중...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: '익명'
     },
     'hu-hu' : {
         title: 'Csevegés',
@@ -359,7 +379,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Írja be üzenetét...',
         listeningIndicator: 'Figyelés...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Névtelen'
     },
     'sv-se' : {
         title: 'Chatt',
@@ -376,7 +397,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Skriv ett meddelande...',
         listeningIndicator: 'Lyssnar...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anonym'
     },
     'tr-tr' : {
         title: 'Sohbet',
@@ -393,7 +415,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'İletinizi yazın...',
         listeningIndicator: 'Dinliyor...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anonim'
    },
    'pt-pt' : {
         title: 'Chat',
@@ -410,7 +433,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Escreva a sua mensagem...',
         listeningIndicator: 'A Escutar...',
         uploadFile: '',
-        speak: ''
+        speak: '',
+        anonymousUsername: 'Anônimo'
    },
    'fi-fi' : {
         title: 'Chat',
@@ -427,7 +451,8 @@ const localizedStrings: LocalizedStrings = {
         consolePlaceholder: 'Kirjoita viesti...',
         listeningIndicator: 'Kuuntelee...',
         uploadFile: 'Lataa tiedosto',
-        speak: 'Puhu'
+        speak: 'Puhu',
+        anonymousUsername: 'anonyymi'
     }
 };
 

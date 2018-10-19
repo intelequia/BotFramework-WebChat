@@ -43,6 +43,7 @@ export class Chat extends React.Component<ChatProps, {}> {
 
     private store = createStore();
 
+    private user: User;
     private botConnection: IBotConnection;
 
     private activitySubscription: Subscription;
@@ -62,6 +63,21 @@ export class Chat extends React.Component<ChatProps, {}> {
     private _saveShellRef = this.saveShellRef.bind(this);
     // tslint:enable:variable-name
 
+    getUser() {
+        const user = { ...this.props.user };
+
+        if (!this.props.user) {
+            // TODO - Get the cookies Bot-UserId and Bot-UserName
+            const state = this.store.getState();
+            // user.id = `${state.format.strings.anonymousUsername} ${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+            user.id = `${state.format.strings.anonymousUsername} ${(Math.random() * 1000000).toString().substring(0, 5)}`;
+            user.name = user.id;
+            user.role = 'user';
+            // TODO - Set the cookies Bot-UserId and Bot-UserName
+        }
+
+        return user;
+    }
     constructor(props: ChatProps) {
         super(props);
 
@@ -72,10 +88,11 @@ export class Chat extends React.Component<ChatProps, {}> {
             locale: props.locale || (window.navigator as any).userLanguage || window.navigator.language || 'en'
         });
 
-        // this.store.dispatch<ChatActions>({
-        //     type: 'Set_Status',
-        //     visible: false
-        // });
+        this.user = this.getUser();
+
+        if (typeof props.chatIconColor !== 'undefined') {
+            this.store.dispatch<ChatActions>({ type: 'Set_ChatIcon_Color', chatIconColor: props.chatIconColor });
+        }
 
         if (props.adaptiveCardsHostConfig) {
             this.store.dispatch<ChatActions>({
@@ -219,7 +236,8 @@ export class Chat extends React.Component<ChatProps, {}> {
             window.addEventListener('resize', this.resizeListener);
         }
 
-        this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.props.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
+        // this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.props.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
+        this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
 
         this.connectionStatusSubscription = botConnection.connectionStatus$.subscribe(connectionStatus => {
                 if (this.props.speechOptions && this.props.speechOptions.speechRecognizer) {
