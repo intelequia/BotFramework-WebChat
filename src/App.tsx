@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { ChatProps } from './Chat';
-import { ChatIcon } from './ChatIcon';
+import { Chat, ChatProps } from './Chat';
 import * as konsole from './Konsole';
 
 export type AppProps = ChatProps;
@@ -13,5 +12,5 @@ export const App = (props: AppProps, container: HTMLElement) => {
 
 const AppContainer = (props: AppProps) =>
     <div className="wc-app">
-        <ChatIcon { ...props } />
+        <Chat { ...props } />
     </div>;

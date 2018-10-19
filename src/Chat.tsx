@@ -72,10 +72,10 @@ export class Chat extends React.Component<ChatProps, {}> {
             locale: props.locale || (window.navigator as any).userLanguage || window.navigator.language || 'en'
         });
 
-        this.store.dispatch<ChatActions>({
-            type: 'Set_Status',
-            visible: false
-        });
+        // this.store.dispatch<ChatActions>({
+        //     type: 'Set_Status',
+        //     visible: false
+        // });
 
         if (props.adaptiveCardsHostConfig) {
             this.store.dispatch<ChatActions>({
@@ -282,6 +282,22 @@ export class Chat extends React.Component<ChatProps, {}> {
         }
     }
 
+    onClickChatIcon() {
+        this.store.dispatch<ChatActions>({
+            type: 'Set_Status',
+            visible: true
+        });
+        this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
+    }
+
+    onCloseWindow() {
+        this.store.dispatch<ChatActions>({
+            type: 'Set_Status',
+            visible: false
+        });
+        this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
+    }
+
     // At startup we do three render passes:
     // 1. To determine the dimensions of the chat panel (nothing needs to actually render here, so we don't)
     // 2. To determine the margins of any given carousel (we just render one mock activity so that we can measure it)
@@ -291,44 +307,58 @@ export class Chat extends React.Component<ChatProps, {}> {
         const state = this.store.getState();
         konsole.log('BotChat.Chat state', state);
 
-        const botIcon = state.format.botIconUrl ? <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div> : <div></div>;
-        const closeButton = <div onClick={this.props.onCloseWindow} className="chat-close-button">
+        const headerBotIcon = state.format.botIconUrl ? <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div> : <div></div>;
+        const headerCloseButton = <div onClick={this.onCloseWindow.bind(this)} className="chat-close-button">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
                                     <path d="M1115 1024 L1658 1567 Q1677 1586 1677 1612.5 Q1677 1639 1658 1658 Q1639 1676 1612 1676 Q1587 1676 1567 1658 L1024 1115 L481 1658 Q462 1676 436 1676 Q410 1676 390 1658 Q371 1639 371 1612.5 Q371 1586 390 1567 L934 1024 L390 481 Q371 462 371 435.5 Q371 409 390 390 Q410 372 436 372 Q462 372 481 390 L1024 934 L1567 390 Q1587 372 1612 372 Q1639 372 1658 390 Q1677 409 1677 435.5 Q1677 462 1658 481 L1115 1024 Z "></path>
                                 </svg>
                             </div>;
         // only render real stuff after we know our dimensions
         return (
-            <Provider store={ this.store }>
+            <div>
                 <div
-                    className="wc-chatview-panel"
-                    onKeyDownCapture={ this._handleKeyDownCapture }
-                    ref={ this._saveChatviewPanelRef }
-                >
-                    {
-                        !!state.format.chatTitle &&
-                            <div className="wc-header">
-                                {botIcon}
-                                <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
-                                {closeButton}
-                            </div>
-                    }
-                    <MessagePane disabled={ this.props.disabled }>
-                        <History
-                            disabled={ this.props.disabled }
-                            onCardAction={ this._handleCardAction }
-                            ref={ this._saveHistoryRef }
-                        />
-                    </MessagePane>
-                    {
-                        !this.props.disabled && <Shell ref={ this._saveShellRef } />
-                    }
-                    {
-                        this.props.resize === 'detect' &&
-                            <ResizeDetector onresize={ this.resizeListener } />
-                    }
+                    className="chat-button"
+                    style={{backgroundColor: `${state.format.chatIconColor}`, visibility: `${state.windowState.visible ? 'hidden' : 'visible'}`}}>
+                    <a onClick={ this.onClickChatIcon.bind(this) } className="chat-button-icon">
+                        <span>
+                            <svg style={{width: 'inherit'}} viewBox="0 0 38 35">
+                                <path fill="#FFF" fillRule="evenodd" d="M36.9 10.05c-1-4.27-4.45-7.6-8.8-8.4-2.95-.5-6-.78-9.1-.78-3.1 0-6.15.27-9.1.8-4.35.8-7.8 4.1-8.8 8.38-.4 1.5-.6 3.07-.6 4.7 0 1.62.2 3.2.6 4.7 1 4.26 4.45 7.58 8.8 8.37 2.95.53 6 .45 9.1.45v5.2c0 .77.62 1.4 1.4 1.4.3 0 .6-.12.82-.3l11.06-8.46c2.3-1.53 3.97-3.9 4.62-6.66.4-1.5.6-3.07.6-4.7 0-1.62-.2-3.2-.6-4.7zm-14.2 9.1H10.68c-.77 0-1.4-.63-1.4-1.4 0-.77.63-1.4 1.4-1.4H22.7c.76 0 1.4.63 1.4 1.4 0 .77-.63 1.4-1.4 1.4zm4.62-6.03H10.68c-.77 0-1.4-.62-1.4-1.38 0-.77.63-1.4 1.4-1.4h16.64c.77 0 1.4.63 1.4 1.4 0 .76-.63 1.38-1.4 1.38z"></path>
+                            </svg>
+                        </span>
+                    </a>
                 </div>
-            </Provider>
+                <Provider store={ this.store }>
+                    <div
+                        className="wc-chatview-panel"
+                        onKeyDownCapture={ this._handleKeyDownCapture }
+                        ref={ this._saveChatviewPanelRef }
+                        style={{visibility: `${state.windowState.visible ? 'visible' : 'hidden'}`}}
+                    >
+                        {
+                            !!state.format.chatTitle &&
+                                <div className="wc-header">
+                                    {headerBotIcon}
+                                    <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
+                                    {headerCloseButton}
+                                </div>
+                        }
+                        <MessagePane disabled={ this.props.disabled }>
+                            <History
+                                disabled={ this.props.disabled }
+                                onCardAction={ this._handleCardAction }
+                                ref={ this._saveHistoryRef }
+                            />
+                        </MessagePane>
+                        {
+                            !this.props.disabled && <Shell ref={ this._saveShellRef } />
+                        }
+                        {
+                            this.props.resize === 'detect' &&
+                                <ResizeDetector onresize={ this.resizeListener } />
+                        }
+                    </div>
+                </Provider>
+            </div>
         );
     }
 }
