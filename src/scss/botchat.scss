@@ -2,16 +2,215 @@
 @import "includes/settings";
 @import "includes/card-size";
 
-.visible {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 2s linear;
+.open-chat {
+    -webkit-animation: open-chat-anim .46s .2s cubic-bezier(0,0,0,1) both;
+    animation: open-chat-anim .46s .2s cubic-bezier(0,0,0,1) both
 }
-.hidden {
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s 2s, opacity 2s linear;
+
+.close-chat,.open-chat {
+    -webkit-transform-origin: bottom right;
+    transform-origin: bottom right
 }
+
+.close-chat {
+    -webkit-animation: close-chat-anim .46s cubic-bezier(0,0,0,1) both;
+    animation: close-chat-anim .46s cubic-bezier(0,0,0,1) both
+}
+
+@-webkit-keyframes open-chat-anim {
+    0% {
+        display: none;
+        opacity: 0;
+        visibility: visible
+    }
+
+    1% {
+        display: auto;
+        -webkit-transform: scale(.8);
+        transform: scale(.8);
+        opacity: 0;
+        -webkit-box-shadow: 0 6px 20px transparent;
+        box-shadow: 0 6px 20px transparent
+    }
+
+    to {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+        -webkit-box-shadow: 0 6px 20px rgba(0,0,0,.2);
+        box-shadow: 0 6px 20px rgba(0,0,0,.2)
+    }
+}
+
+@keyframes open-chat-anim {
+    0% {
+        display: none;
+        opacity: 0;
+        visibility: visible
+    }
+
+    1% {
+        display: auto;
+        -webkit-transform: scale(.8);
+        transform: scale(.8);
+        opacity: 0;
+        -webkit-box-shadow: 0 6px 20px transparent;
+        box-shadow: 0 6px 20px transparent
+    }
+
+    to {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+        -webkit-box-shadow: 0 6px 20px rgba(0,0,0,.2);
+        box-shadow: 0 6px 20px rgba(0,0,0,.2)
+    }
+}
+
+@-webkit-keyframes close-chat-anim {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+        -webkit-box-shadow: 0 6px 20px rgba(0,0,0,.2);
+        box-shadow: 0 6px 20px rgba(0,0,0,.2);
+        display: auto
+    }
+
+    99% {
+        -webkit-transform: scale(.8);
+        transform: scale(.8);
+        opacity: 0;
+        -webkit-box-shadow: 0 6px 20px transparent;
+        box-shadow: 0 6px 20px transparent;
+        display: auto
+    }
+
+    to {
+        display: none;
+        opacity: 0;
+        visibility: collapse
+    }
+}
+
+@keyframes close-chat-anim {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+        -webkit-box-shadow: 0 6px 20px rgba(0,0,0,.2);
+        box-shadow: 0 6px 20px rgba(0,0,0,.2);
+        display: auto
+    }
+
+    99% {
+        -webkit-transform: scale(.8);
+        transform: scale(.8);
+        opacity: 0;
+        -webkit-box-shadow: 0 6px 20px transparent;
+        box-shadow: 0 6px 20px transparent;
+        display: auto
+    }
+
+    to {
+        display: none;
+        opacity: 0;
+        visibility: collapse
+    }
+}
+
+.open-button {
+    -webkit-animation: open-tab-anim .4s cubic-bezier(0,0,0,1) both;
+    animation: open-tab-anim .4s cubic-bezier(0,0,0,1) both
+}
+
+.close-button {
+    -webkit-animation: close-tab-anim .4s .36s cubic-bezier(0,0,0,1) both;
+    animation: close-tab-anim .4s .36s cubic-bezier(0,0,0,1) both
+}
+
+@-webkit-keyframes open-tab-anim {
+    0% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
+
+    99% {
+        opacity: 0;
+        -webkit-transform: translateY(20px);
+        transform: translateY(20px);
+        display: auto
+    }
+
+    to {
+        display: none;
+        opacity: 0
+    }
+}
+
+@keyframes open-tab-anim {
+    0% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
+
+    99% {
+        opacity: 0;
+        -webkit-transform: translateY(20px);
+        transform: translateY(20px);
+        display: auto
+    }
+
+    to {
+        display: none;
+        opacity: 0
+    }
+}
+
+@-webkit-keyframes close-tab-anim {
+    0% {
+        display: none;
+        opacity: 0
+    }
+
+    1% {
+        opacity: 0;
+        -webkit-transform: translateY(20px);
+        transform: translateY(20px);
+        display: auto
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
+}
+
+@keyframes close-tab-anim {
+    0% {
+        display: none;
+        opacity: 0
+    }
+
+    1% {
+        opacity: 0;
+        -webkit-transform: translateY(20px);
+        transform: translateY(20px);
+        display: auto
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
+}
+
+
+
 
 .chat-button {
     margin: 10px;

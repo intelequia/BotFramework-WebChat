@@ -317,8 +317,8 @@ export class Chat extends React.Component<ChatProps, {}> {
         return (
             <div>
                 <div
-                    className="chat-button"
-                    style={{backgroundColor: `${state.format.chatIconColor}`, visibility: `${state.windowState.visible ? 'hidden' : 'visible'}`}}>
+                    className={ `chat-button ${state.windowState.visible ? 'open-button' : 'close-button'}` }
+                    style={{backgroundColor: `${state.format.chatIconColor}`}}>
                     <a onClick={ this.onClickChatIcon.bind(this) } className="chat-button-icon">
                         <span>
                             <svg style={{width: 'inherit'}} viewBox="0 0 38 35">
@@ -329,10 +329,9 @@ export class Chat extends React.Component<ChatProps, {}> {
                 </div>
                 <Provider store={ this.store }>
                     <div
-                        className="wc-chatview-panel"
+                        className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : 'close-chat'}` }
                         onKeyDownCapture={ this._handleKeyDownCapture }
                         ref={ this._saveChatviewPanelRef }
-                        style={{visibility: `${state.windowState.visible ? 'visible' : 'hidden'}`}}
                     >
                         {
                             !!state.format.chatTitle &&
