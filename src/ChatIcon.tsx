@@ -15,6 +15,9 @@ export class ChatIcon extends React.Component<ChatProps, {}> {
         if (typeof props.chatIconColor !== 'undefined') {
             this.store.dispatch<ChatActions>({ type: 'Set_ChatIcon_Color', chatIconColor: props.chatIconColor });
         }
+        if (typeof props.windowStatus !== 'undefined' && typeof props.windowStatus.visible !== 'undefined') {
+            this.store.dispatch<ChatActions>({ type: 'Set_Status', visible: props.windowStatus.visible });
+        }
     }
 
     onClickChatIcon() {
