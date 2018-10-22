@@ -14,6 +14,8 @@ import { SpeechOptions } from './SpeechOptions';
 import { ChatActions, createStore, sendMessage, WindowState } from './Store';
 import { ActivityOrID, FormatOptions } from './Types';
 
+import { Cookies } from 'react-cookie';
+
 export interface ChatProps {
     adaptiveCardsHostConfig: any;
     bot: User;
@@ -31,8 +33,6 @@ export interface ChatProps {
     user: User;
     botIconUrl: string;
     chatIconColor: string;
-    windowStatus: WindowState;
-    onCloseWindow: React.MouseEventHandler<HTMLDivElement>;
 }
 
 import { History } from './History';
@@ -67,13 +67,18 @@ export class Chat extends React.Component<ChatProps, {}> {
         const user = { ...this.props.user };
 
         if (!this.props.user) {
-            // TODO - Get the cookies Bot-UserId and Bot-UserName
-            const state = this.store.getState();
-            // user.id = `${state.format.strings.anonymousUsername} ${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-            user.id = `${state.format.strings.anonymousUsername} ${(Math.random() * 1000000).toString().substring(0, 5)}`;
-            user.name = user.id;
+            // Get the cookies Bot-UserId and Bot-UserName
+            const cookie = new Cookies();
+            const botUserId = cookie.get('Bot-UserId');
+            const botUserName = cookie.get('Bot-UserName');
+
+            user.id = botUserId ? botUserId : `${this.store.getState().format.strings.anonymousUsername} ${(Math.random() * 1000000).toString().substring(0, 5)}`;
+            user.name = botUserName ? botUserName : user.id;
             user.role = 'user';
-            // TODO - Set the cookies Bot-UserId and Bot-UserName
+
+            // Set the cookies Bot-UserId and Bot-UserName
+            cookie.set('Bot-UserId', user.id, { path: '/' });
+            cookie.set('Bot-UserName', user.name, { path: '/' });
         }
 
         return user;
