@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
-import { Activity, CardActionTypes, DirectLine, DirectLineOptions, IBotConnection, User } from 'botframework-directlinejs';
+import { Activity, CardActionTypes, ConnectionStatus, DirectLine, DirectLineOptions, IBotConnection, User } from 'botframework-directlinejs';
 import { Provider } from 'react-redux';
 import { getTabIndex } from './getTabIndex';
 import * as konsole from './Konsole';
@@ -124,7 +124,7 @@ export class Chat extends React.Component<ChatProps, {}> {
             this.store.dispatch<ChatActions>({ type: 'Set_BotIcon_Url', botIconUrl: props.botIconUrl });
         }
 
-        this.store.dispatch<ChatActions>({ type: 'Toggle_Upload_Button', showUploadButton: props.showUploadButton !== false });
+        this.store.dispatch<ChatActions>({ type: 'Toggle_Upload_Button', showUploadButton: props.showUploadButton === false });
 
         if (props.sendTyping) {
             this.store.dispatch<ChatActions>({ type: 'Set_Send_Typing', sendTyping: props.sendTyping });
@@ -250,6 +250,9 @@ export class Chat extends React.Component<ChatProps, {}> {
                     if (refGrammarId) {
                         this.props.speechOptions.speechRecognizer.referenceGrammarId = refGrammarId;
                     }
+                }
+                if (connectionStatus === ConnectionStatus.Online) {
+                    sendEventPostBack(botConnection, 'StartConversation', {locale: this.props.locale}, this.user);
                 }
                 this.store.dispatch<ChatActions>({ type: 'Connection_Change', connectionStatus });
             }
@@ -444,6 +447,22 @@ export const sendPostBack = (botConnection: IBotConnection, text: string, value:
         value,
         from,
         locale,
+        channelData: {
+            postback: true
+        }
+    })
+    .subscribe(
+        id => konsole.log('success sending postBack', id),
+        error => konsole.log('failed to send postBack', error)
+    );
+};
+
+export const sendEventPostBack = (botConnection: IBotConnection, name: string, value: object, from: User) => {
+    botConnection.postActivity({
+        type: 'event',
+        name,
+        value,
+        from,
         channelData: {
             postback: true
         }
