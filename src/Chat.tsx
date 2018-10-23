@@ -228,19 +228,14 @@ export class Chat extends React.Component<ChatProps, {}> {
         this.shellRef = shellWrapper && shellWrapper.getWrappedInstance();
     }
 
-    componentDidMount() {
-        // Now that we're mounted, we know our dimensions. Put them in the store (this will force a re-render)
-        this.setSize();
-
+    startConnection() {
         const botConnection = this.props.directLine
-            ? (this.botConnection = new DirectLine(this.props.directLine))
-            : this.props.botConnection
-            ;
+                                ? (this.botConnection = new DirectLine(this.props.directLine))
+                                : this.props.botConnection;
 
         if (this.props.resize === 'window') {
             window.addEventListener('resize', this.resizeListener);
         }
-
         // this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.props.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
         this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
 
@@ -270,6 +265,15 @@ export class Chat extends React.Component<ChatProps, {}> {
                     selectedActivity: activityOrID.activity || this.store.getState().history.activities.find(activity => activity.id === activityOrID.id)
                 });
             });
+        }
+    }
+
+    componentDidMount() {
+        // Now that we're mounted, we know our dimensions. Put them in the store (this will force a re-render)
+        this.setSize();
+
+        if (this.store.getState().windowState.visible) {
+            this.startConnection();
         }
     }
 
@@ -313,6 +317,11 @@ export class Chat extends React.Component<ChatProps, {}> {
             type: 'Set_Status',
             visible: true
         });
+
+        if (!this.store.getState().connection.botConnection) {  // If this is the first time the chat window is opened, we have to start the conversation
+            this.startConnection();
+        }
+
         this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
     }
 
@@ -334,11 +343,11 @@ export class Chat extends React.Component<ChatProps, {}> {
         konsole.log('BotChat.Chat state', state);
 
         const headerBotIcon = state.format.botIconUrl ? <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div> : <div></div>;
-        const headerCloseButton = <div onClick={this.onCloseWindow.bind(this)} className="chat-close-button">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
-                                    <path d="M1115 1024 L1658 1567 Q1677 1586 1677 1612.5 Q1677 1639 1658 1658 Q1639 1676 1612 1676 Q1587 1676 1567 1658 L1024 1115 L481 1658 Q462 1676 436 1676 Q410 1676 390 1658 Q371 1639 371 1612.5 Q371 1586 390 1567 L934 1024 L390 481 Q371 462 371 435.5 Q371 409 390 390 Q410 372 436 372 Q462 372 481 390 L1024 934 L1567 390 Q1587 372 1612 372 Q1639 372 1658 390 Q1677 409 1677 435.5 Q1677 462 1658 481 L1115 1024 Z "></path>
-                                </svg>
-                            </div>;
+        const headerCloseButton =   <div onClick={this.onCloseWindow.bind(this)} className="chat-close-button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+                                            <path d="M1115 1024 L1658 1567 Q1677 1586 1677 1612.5 Q1677 1639 1658 1658 Q1639 1676 1612 1676 Q1587 1676 1567 1658 L1024 1115 L481 1658 Q462 1676 436 1676 Q410 1676 390 1658 Q371 1639 371 1612.5 Q371 1586 390 1567 L934 1024 L390 481 Q371 462 371 435.5 Q371 409 390 390 Q410 372 436 372 Q462 372 481 390 L1024 934 L1567 390 Q1587 372 1612 372 Q1639 372 1658 390 Q1677 409 1677 435.5 Q1677 462 1658 481 L1115 1024 Z "></path>
+                                        </svg>
+                                    </div>;
         // only render real stuff after we know our dimensions
         return (
             <div>
