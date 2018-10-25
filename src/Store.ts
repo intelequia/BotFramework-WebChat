@@ -158,6 +158,7 @@ export interface FormatState {
     carouselMargin: number;
     botIconUrl: string;
     chatIconColor: string;
+    showBrandMessage: boolean;
 }
 
 export type FormatAction = {
@@ -178,6 +179,9 @@ export type FormatAction = {
 } | {
     type: 'Set_ChatIcon_Color',
     chatIconColor: string
+} | {
+    type: 'Set_BrandMessage_Status',
+    showBrandMessage: boolean
 };
 
 export const format: Reducer<FormatState> = (
@@ -188,7 +192,8 @@ export const format: Reducer<FormatState> = (
         strings: defaultStrings,
         carouselMargin: undefined,
         botIconUrl: undefined,
-        chatIconColor: '#d9534f'
+        chatIconColor: '#d9534f',
+        showBrandMessage: false
     },
     action: FormatAction
 ) => {
@@ -223,6 +228,11 @@ export const format: Reducer<FormatState> = (
             return {
                 ...state,
                 chatIconColor: action.chatIconColor
+            };
+        case 'Set_BrandMessage_Status':
+            return {
+                ...state,
+                showBrandMessage: action.showBrandMessage
             };
         default:
             return state;
@@ -339,14 +349,14 @@ export interface HistoryState {
 }
 
 export type HistoryAction = {
-    type: 'Receive_Message' | 'Send_Message' | 'Show_Typing' | 'Receive_Sent_Message'
+    type: 'Receive_Message' | 'Send_Message' | 'Show_Typing' | 'Receive_Sent_Message',
     activity: Activity
 } | {
     type: 'Send_Message_Try' | 'Send_Message_Fail' | 'Send_Message_Retry',
     clientActivityId: string
 } | {
-    type: 'Send_Message_Succeed'
-    clientActivityId: string
+    type: 'Send_Message_Succeed',
+    clientActivityId: string,
     id: string
 } | {
     type: 'Select_Activity',

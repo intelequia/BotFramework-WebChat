@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { classList } from './Chat';
 import { Speech } from './SpeechModule';
 import { ChatActions, ListeningState, sendFiles, sendMessage } from './Store';
-import { ChatState } from './Store';
+import { ChatState, FormatState } from './Store';
 import { Strings } from './Strings';
 
 interface Props {
@@ -12,6 +12,8 @@ interface Props {
     strings: Strings;
     listeningState: ListeningState;
     showUploadButton: boolean;
+    format: FormatState;
+    showBrandMessage: boolean;
 
     onChangeText: (inputText: string) => void;
 
@@ -103,7 +105,8 @@ class ShellContainer extends React.Component<Props> implements ShellFunctions {
         const className = classList(
             'wc-console',
             this.props.inputText.length > 0 && 'has-text',
-            this.props.showUploadButton && 'has-upload-button'
+            this.props.showUploadButton && 'has-upload-button',
+            this.props.showBrandMessage && 'brandmessage-margin'
         );
 
         const showMicButton = this.props.listeningState !== ListeningState.STOPPED || (Speech.SpeechRecognizer.speechIsAvailable()  && !this.props.inputText.length);
@@ -206,7 +209,8 @@ export const Shell = connect(
         // only used to create helper functions below
         locale: state.format.locale,
         user: state.connection.user,
-        listeningState: state.shell.listeningState
+        listeningState: state.shell.listeningState,
+        showBrandMessage: state.format.showBrandMessage
     }), {
         // passed down to ShellContainer
         onChangeText: (input: string) => ({ type: 'Update_Input', input, source: 'text' } as ChatActions),
@@ -221,6 +225,8 @@ export const Shell = connect(
         showUploadButton: stateProps.showUploadButton,
         strings: stateProps.strings,
         listeningState: stateProps.listeningState,
+        format: stateProps.format,
+        showBrandMessage: ownProps.showBrandMessage,
         // from dispatchProps
         onChangeText: dispatchProps.onChangeText,
         // helper functions

@@ -169,7 +169,8 @@ export class HistoryView extends React.Component<HistoryProps, {}> {
         const groupsClassName = classList(
             'wc-message-groups',
             !this.props.format.chatTitle && 'no-header',
-            this.props.disabled && 'disabled'
+            this.props.disabled && 'disabled',
+            this.props.format.showBrandMessage && 'brandmessage-margin'
         );
 
         return (

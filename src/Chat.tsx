@@ -33,6 +33,7 @@ export interface ChatProps {
     user: User;
     botIconUrl: string;
     chatIconColor: string;
+    showBrandMessage: boolean;
 }
 
 import { History } from './History';
@@ -97,6 +98,10 @@ export class Chat extends React.Component<ChatProps, {}> {
 
         if (typeof props.chatIconColor !== 'undefined') {
             this.store.dispatch<ChatActions>({ type: 'Set_ChatIcon_Color', chatIconColor: props.chatIconColor });
+        }
+
+        if (typeof props.showBrandMessage !== 'undefined') {
+            this.store.dispatch<ChatActions>({ type: 'Set_BrandMessage_Status', showBrandMessage: props.showBrandMessage });
         }
 
         if (props.adaptiveCardsHostConfig) {
@@ -381,14 +386,21 @@ export class Chat extends React.Component<ChatProps, {}> {
                                 disabled={ this.props.disabled }
                                 onCardAction={ this._handleCardAction }
                                 ref={ this._saveHistoryRef }
+                                showBrandMessage={ state.format.showBrandMessage }
                             />
                         </MessagePane>
                         {
-                            !this.props.disabled && <Shell ref={ this._saveShellRef } />
+                            !this.props.disabled && <Shell
+                                                        ref={ this._saveShellRef }
+                                                        showBrandMessage={ state.format.showBrandMessage }
+                                                    />
                         }
                         {
                             this.props.resize === 'detect' &&
                                 <ResizeDetector onresize={ this.resizeListener } />
+                        }
+                        {
+                            state.format.showBrandMessage && <div className="wc-brandmessage">Powered by Hotelequia</div>
                         }
                     </div>
                 </Provider>

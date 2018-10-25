@@ -209,9 +209,6 @@
     }
 }
 
-
-
-
 .chat-button {
     margin: 10px;
     position: fixed;
@@ -233,14 +230,16 @@
     align-items: center;
 }
 
-.chat-window {
-    width: 400px;
-    height: 590px;
-    margin: 10px;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    z-index: 1000;
+@media (min-width: 470px) and (min-height: 600px) {
+    .chat-window {
+        width: 400px;
+        height: 590px;
+        margin: 10px;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        z-index: 1000;
+    }    
 }
 
 .ac-image {
@@ -340,6 +339,9 @@
         top: $headerTotalHeight;
         transition: transform $actionTransition;
 
+        &.brandmessage-margin {
+            bottom: $consoleHeight + 10px;
+        }
         &.no-header {
             top: 0;
         }
@@ -473,7 +475,12 @@
         left: 0;
         top: 0;
         bottom: 0;
-        border-radius: 7px;
+    }
+
+    @media (min-width: 470px) and (min-height: 600px) {
+        .wc-chatview-panel {
+            border-radius: 7px;
+        }
     }
 
 /* messages */
@@ -498,6 +505,7 @@
             width: 32px;
             height: 32px;
             background-size: contain;
+            background-repeat: no-repeat;
         }
     }
 
@@ -895,6 +903,14 @@
     }
 
 /* console */
+    .wc-brandmessage {
+        bottom: 0;
+        position: absolute;
+        font-size: 10px;
+        color: $c_timestamp;
+        margin-left: 10px;
+        margin-bottom: 5px;
+    }
 
     .wc-console {
         background-color: $c09;
@@ -909,6 +925,9 @@
         position: absolute;
         right: 0;
 
+        &.brandmessage-margin {
+            margin-bottom: 22px;
+        }
         > .wc-upload,
         > .wc-textbox,
         > .wc-send,
