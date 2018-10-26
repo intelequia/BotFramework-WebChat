@@ -34,6 +34,7 @@ export interface ChatProps {
     botIconUrl: string;
     chatIconColor: string;
     showBrandMessage: boolean;
+    brandMessage: string;
 }
 
 import { History } from './History';
@@ -102,6 +103,11 @@ export class Chat extends React.Component<ChatProps, {}> {
 
         if (typeof props.showBrandMessage !== 'undefined') {
             this.store.dispatch<ChatActions>({ type: 'Set_BrandMessage_Status', showBrandMessage: props.showBrandMessage });
+            if (typeof props.brandMessage !== 'undefined') {
+                this.store.dispatch<ChatActions>({ type: 'Set_BrandMessage', brandMessage: props.brandMessage });
+            } else {
+                this.store.dispatch<ChatActions>({ type: 'Set_BrandMessage', brandMessage: 'Powered by Intelequia' });
+            }
         }
 
         if (props.adaptiveCardsHostConfig) {
@@ -400,7 +406,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                                 <ResizeDetector onresize={ this.resizeListener } />
                         }
                         {
-                            state.format.showBrandMessage && <div className="wc-brandmessage">Powered by Hotelequia</div>
+                            state.format.showBrandMessage && <div className="wc-brandmessage">{state.format.brandMessage}</div>
                         }
                     </div>
                 </Provider>

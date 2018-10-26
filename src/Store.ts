@@ -159,6 +159,7 @@ export interface FormatState {
     botIconUrl: string;
     chatIconColor: string;
     showBrandMessage: boolean;
+    brandMessage: string;
 }
 
 export type FormatAction = {
@@ -182,6 +183,9 @@ export type FormatAction = {
 } | {
     type: 'Set_BrandMessage_Status',
     showBrandMessage: boolean
+} | {
+    type: 'Set_BrandMessage',
+    brandMessage: string
 };
 
 export const format: Reducer<FormatState> = (
@@ -193,7 +197,8 @@ export const format: Reducer<FormatState> = (
         carouselMargin: undefined,
         botIconUrl: undefined,
         chatIconColor: '#d9534f',
-        showBrandMessage: false
+        showBrandMessage: false,
+        brandMessage: 'Powered by Intelequia'
     },
     action: FormatAction
 ) => {
@@ -233,6 +238,11 @@ export const format: Reducer<FormatState> = (
             return {
                 ...state,
                 showBrandMessage: action.showBrandMessage
+            };
+            case 'Set_BrandMessage':
+            return {
+                ...state,
+                brandMessage: action.brandMessage
             };
         default:
             return state;
