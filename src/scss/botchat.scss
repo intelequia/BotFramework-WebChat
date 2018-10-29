@@ -2,12 +2,17 @@
 @import "includes/settings";
 @import "includes/card-size";
 
-.open-chat {
+.open-chat-animate {
     -webkit-animation: open-chat-anim .46s .2s cubic-bezier(0,0,0,1) both;
     animation: open-chat-anim .46s .2s cubic-bezier(0,0,0,1) both
 }
 
-.close-chat,.open-chat {
+.open-chat-no-animate {
+    display: auto;
+    visibility: visible;
+}
+
+.close-chat-animate, .close-chat-no-animate,.open-chat-animate,.open-chat-no-animate {
     -webkit-transform-origin: bottom right;
     transform-origin: bottom right
 }
@@ -122,14 +127,20 @@
     }
 }
 
-.open-button {
+.open-button-animate {
     -webkit-animation: open-tab-anim .4s cubic-bezier(0,0,0,1) both;
     animation: open-tab-anim .4s cubic-bezier(0,0,0,1) both
 }
+.open-button-no-animate {
+    display: none;
+}
 
-.close-button {
+.close-button-animate {
     -webkit-animation: close-tab-anim .4s .36s cubic-bezier(0,0,0,1) both;
     animation: close-tab-anim .4s .36s cubic-bezier(0,0,0,1) both
+}
+.close-button-no-animate {
+    display: block;
 }
 
 @-webkit-keyframes open-tab-anim {
@@ -245,13 +256,17 @@
     }    
 }
 
-.full-screen {
+.fullscreen {
     width: 100%;
     height: 100%;
     margin: 0;
 
     .wc-chatview-panel {
         border-radius: 0;
+    }
+
+    .chat-close-button {
+        display: none;
     }
 }
 
@@ -498,9 +513,9 @@
 
 /* messages */
 
-    .icon-and-message {
-        display: inline-flex;
-    }
+    // .icon-and-message {
+    //     display: inline-flex;
+    // }
 
     .wc-message-wrapper {
         animation: animationFrames 2s;

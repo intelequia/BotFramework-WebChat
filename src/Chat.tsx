@@ -374,7 +374,7 @@ export class Chat extends React.Component<ChatProps, {}> {
         return (
             <div>
                 <div
-                    className={ `chat-button ${state.windowState.visible ? 'open-button' : 'close-button'}` }
+                    className={ `chat-button ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}` }
                     style={{backgroundColor: `${state.format.chatIconColor}`}}>
                     <a onClick={ this.onClickChatIcon.bind(this) } className="chat-button-icon">
                         <span>
@@ -386,7 +386,8 @@ export class Chat extends React.Component<ChatProps, {}> {
                 </div>
                 <Provider store={ this.store }>
                     <div
-                        className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : this.firstLoad ? 'close-chat-no-animate' : 'close-chat-animate'}` }
+                        className={ `wc-chatview-panel ${state.windowState.visible ? 'open' : 'close'}-chat-${this.firstLoad ? 'no-animate' : 'animate'}` }
+                        // className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : this.firstLoad ? 'close-chat-no-animate' : 'close-chat-animate'}` }
                         onKeyDownCapture={ this._handleKeyDownCapture }
                         ref={ this._saveChatviewPanelRef }
                     >
