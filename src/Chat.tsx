@@ -35,6 +35,7 @@ export interface ChatProps {
     chatIconColor: string;
     showBrandMessage: boolean;
     brandMessage: string;
+    windowStatus: WindowState;
 }
 
 import { History } from './History';
@@ -97,6 +98,10 @@ export class Chat extends React.Component<ChatProps, {}> {
         });
 
         this.user = this.getUser();
+
+        if (typeof props.windowStatus !== 'undefined' && typeof props.windowStatus.visible !== 'undefined') {
+            this.store.dispatch<ChatActions>({ type: 'Set_Status', visible: props.windowStatus.visible });
+        }
 
         if (typeof props.chatIconColor !== 'undefined') {
             this.store.dispatch<ChatActions>({ type: 'Set_ChatIcon_Color', chatIconColor: props.chatIconColor });
