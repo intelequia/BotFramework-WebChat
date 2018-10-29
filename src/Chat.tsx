@@ -54,6 +54,7 @@ export class Chat extends React.Component<ChatProps, {}> {
     private shellRef: React.Component & ShellFunctions;
     private historyRef: React.Component;
     private chatviewPanelRef: HTMLElement;
+    private firstLoad: boolean;
 
     private resizeListener = () => this.setSize();
 
@@ -279,6 +280,9 @@ export class Chat extends React.Component<ChatProps, {}> {
         }
     }
 
+    componentWillMount() {
+        this.firstLoad = true;
+    }
     componentDidMount() {
         // Now that we're mounted, we know our dimensions. Put them in the store (this will force a re-render)
         this.setSize();
@@ -286,6 +290,8 @@ export class Chat extends React.Component<ChatProps, {}> {
         if (this.store.getState().windowState.visible) {
             this.startConnection();
         }
+
+        this.firstLoad = false;
     }
 
     componentWillUnmount() {
@@ -375,7 +381,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                 </div>
                 <Provider store={ this.store }>
                     <div
-                        className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : 'close-chat'}` }
+                        className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : this.firstLoad ? 'close-chat-no-animate' : 'close-chat-animate'}` }
                         onKeyDownCapture={ this._handleKeyDownCapture }
                         ref={ this._saveChatviewPanelRef }
                     >

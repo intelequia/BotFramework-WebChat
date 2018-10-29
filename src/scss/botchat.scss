@@ -12,9 +12,12 @@
     transform-origin: bottom right
 }
 
-.close-chat {
+.close-chat-animate {
     -webkit-animation: close-chat-anim .46s cubic-bezier(0,0,0,1) both;
-    animation: close-chat-anim .46s cubic-bezier(0,0,0,1) both
+    animation: close-chat-anim .46s cubic-bezier(0,0,0,1) both;
+}
+.close-chat-no-animate {
+    display: none;
 }
 
 @-webkit-keyframes open-chat-anim {
