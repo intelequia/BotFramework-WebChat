@@ -386,40 +386,43 @@ export class Chat extends React.Component<ChatProps, {}> {
                 </div>
                 <Provider store={ this.store }>
                     <div
-                        className={ `wc-chatview-panel ${state.windowState.visible ? 'open' : 'close'}-chat-${this.firstLoad ? 'no-animate' : 'animate'}` }
-                        // className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : this.firstLoad ? 'close-chat-no-animate' : 'close-chat-animate'}` }
-                        onKeyDownCapture={ this._handleKeyDownCapture }
-                        ref={ this._saveChatviewPanelRef }
-                    >
-                        {
-                            !!state.format.chatTitle &&
-                                <div className="wc-header">
-                                    {headerBotIcon}
-                                    <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
-                                    {headerCloseButton}
-                                </div>
-                        }
-                        <MessagePane disabled={ this.props.disabled }>
-                            <History
-                                disabled={ this.props.disabled }
-                                onCardAction={ this._handleCardAction }
-                                ref={ this._saveHistoryRef }
-                                showBrandMessage={ state.format.showBrandMessage }
-                            />
-                        </MessagePane>
-                        {
-                            !this.props.disabled && <Shell
-                                                        ref={ this._saveShellRef }
-                                                        showBrandMessage={ state.format.showBrandMessage }
-                                                    />
-                        }
-                        {
-                            this.props.resize === 'detect' &&
-                                <ResizeDetector onresize={ this.resizeListener } />
-                        }
-                        {
-                            state.format.showBrandMessage && <div className="wc-brandmessage">{state.format.brandMessage}</div>
-                        }
+                        className={ `chat-window ${state.windowState.visible ? 'open' : 'close'}-chat-${this.firstLoad ? 'no-animate' : 'animate'}` }>
+                        <div
+                            className="wc-chatview-panel"
+                            // className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : this.firstLoad ? 'close-chat-no-animate' : 'close-chat-animate'}` }
+                            onKeyDownCapture={ this._handleKeyDownCapture }
+                            ref={ this._saveChatviewPanelRef }
+                        >
+                            {
+                                !!state.format.chatTitle &&
+                                    <div className="wc-header">
+                                        {headerBotIcon}
+                                        <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
+                                        {headerCloseButton}
+                                    </div>
+                            }
+                            <MessagePane disabled={ this.props.disabled }>
+                                <History
+                                    disabled={ this.props.disabled }
+                                    onCardAction={ this._handleCardAction }
+                                    ref={ this._saveHistoryRef }
+                                    showBrandMessage={ state.format.showBrandMessage }
+                                />
+                            </MessagePane>
+                            {
+                                !this.props.disabled && <Shell
+                                                            ref={ this._saveShellRef }
+                                                            showBrandMessage={ state.format.showBrandMessage }
+                                                        />
+                            }
+                            {
+                                this.props.resize === 'detect' &&
+                                    <ResizeDetector onresize={ this.resizeListener } />
+                            }
+                            {
+                                state.format.showBrandMessage && <div className="wc-brandmessage">{state.format.brandMessage}</div>
+                            }
+                        </div>
                     </div>
                 </Provider>
             </div>
