@@ -276,9 +276,15 @@
 }
 
 .fullscreen {
-    width: 100%;
-    height: 100%;
-    margin: 0;
+    margin: 0;    
+
+    .chat-window {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        margin: 0;
+    }
 
     .wc-chatview-panel {
         border-radius: 0;
@@ -286,6 +292,10 @@
 
     .chat-close-button {
         display: none;
+    }
+
+    .wc-carousel {
+        width: unset;        
     }
 }
 
@@ -831,12 +841,12 @@
 
         button.scroll {
             background-color: $c11;
-            height: 28px;
+            height: 58px;
             overflow: hidden;
             padding: 0;
             position: absolute;
             top: 50%;
-            width: 28px;
+            width: 58px;
             border-radius: 50%;
         }
 
@@ -852,7 +862,8 @@
 
         button.scroll svg {
             fill: $c08;
-            padding-left: 0;
+            padding-left: 13px; 
+            padding-top: 13px; 
         }
 
         button.scroll:focus svg,
