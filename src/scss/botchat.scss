@@ -228,8 +228,7 @@
     position: fixed;
     bottom: 30px;
     right: 10px;
-    z-index: 1000000;
-    // background-color: rgb(217, 83, 79);
+    // z-index: 1000000;
     width: 60px;
     height: 60px;
     cursor: pointer;
@@ -240,8 +239,18 @@
 .chat-button-icon span {
     width: 32px;
     padding: 16px 14px 14px 14px;
-    display: flex;
+    display: inline-block;
     align-items: center;
+}
+
+.chat-window {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 10000;
 }
 
 @media (min-width: 470px) and (min-height: 600px) {
@@ -252,8 +261,18 @@
         position: fixed;
         bottom: 0;
         right: 0;
-        z-index: 1000;
+        z-index: 10000;
     }    
+}
+
+.chat-window {
+    div, span, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, img,  small, strike, strong, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, footer, header, hgroup, menu, nav, output, section, summary, mark, audio, video {
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    p {
+        line-height: normal;
+    }
 }
 
 .fullscreen {
@@ -517,9 +536,9 @@
 
 /* messages */
 
-    // .icon-and-message {
-    //     display: inline-flex;
-    // }
+    .icon-and-message {
+        display: block;
+    }
 
     .wc-message-wrapper {
         animation: animationFrames 2s;
@@ -633,6 +652,7 @@
             width: 100%;
             padding: 0 16px;
             border-radius: 5px;
+            flex-basis: auto!important;
         }
 
         button:hover {
@@ -806,6 +826,7 @@
 /* carousel */
 
     .wc-carousel {
+        width: 300px;
         position: relative;
 
         button.scroll {
