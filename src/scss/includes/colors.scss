@@ -1,18 +1,17 @@
 //Note: for Adaptive cards 0.5.6, you must use rgb, rgba, or the 6-digit hex (do not use 3 digit hex shortcut)
-$c00: #000000;
-$c01: #ffffff;
-$c02: rgba(0, 0, 0, 0.2);
-$c03: #8a8a8a;
-$c04: #999999;
-$c05: #cccccc;
-$c06: #767676; // used for timestamp under chat bubbles
-$c07: #ed823c;
-//$c07: #ed823c;
-$c08: #575a5e;
-$c09: #f1f1f4;
-$c10: #dbdee1;
-$c11: #d2dde5;
-$c12: #ffa333;
+$c00: #000000 !default;
+$c01: #ffffff !default;
+$c02: rgba(0, 0, 0, 0.2) !default;
+$c03: #8a8a8a !default;
+$c04: #999999 !default;
+$c05: #cccccc !default;
+$c06: #767676 !default; // used for timestamp under chat bubbles
+$c07: #0078d7 !default;
+$c08: #575a5e !default;
+$c09: #f1f1f4 !default;
+$c10: #dbdee1 !default;
+$c11: #d2dde5 !default;
+$c12: #0078d7 !default;
 
 $c_brand: $c07;
 $c_line: $c05;
