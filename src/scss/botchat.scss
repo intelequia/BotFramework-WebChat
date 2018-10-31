@@ -480,6 +480,7 @@
             width: 38px;
             height: 100%;
             border-radius: 50%;
+            z-index: 9999;
         }
 
         button.scroll:disabled {
@@ -1219,3 +1220,7 @@
             @include link-and-svg-arrow($c01, 0.6);
         }
     }
+/* Fix for vertical scrolling with carousels cards on iOS */
+    body {
+        -webkit-overflow-scrolling: touch;  
+      }
