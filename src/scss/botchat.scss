@@ -849,6 +849,7 @@
             top: 50%;
             width: 58px;
             border-radius: 50%;
+            z-index: 9999;
         }
 
         button.scroll:disabled {
