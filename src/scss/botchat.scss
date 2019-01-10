@@ -223,6 +223,31 @@
     }
 }
 
+.chat-button-message {
+    padding: 10px;
+    position: fixed;
+    bottom: 115px;
+    right: 10px;
+    z-index: 10000;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.2);
+    max-width: 300px;
+    background-color: $c01;
+    font-family: $fontFamily;
+    font-size: $fontSize;
+}
+.chat-button-message-arrow {
+    position: absolute;
+    bottom: -10px;
+    right: 30px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid $c01;
+}
+
 .chat-button {
     margin: 10px;
     position: fixed;

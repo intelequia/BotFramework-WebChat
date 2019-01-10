@@ -1,0 +1,64 @@
+$c07: #ed823c;
+$c12: #ed823c;
+$c_messageFromMe: #8a8a8a;
+
+@import "botchat";
+
+.wc-header {
+    background-color: $c07;
+    color: white;
+
+    svg {
+        fill: white;
+    }
+
+    @media (min-width: 470px) and (min-height: 600px) {
+        height: 80px;
+        background-image: url('./header-small.png');
+        background-repeat: no-repeat;
+        background-position: center;
+
+        .bot-icon {
+            display: none;
+        }
+
+        span {
+            display: none;
+        }
+
+        .chat-close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    }
+}
+
+@media (min-width: 470px) and (min-height: 600px) {
+    .wc-message-pane {
+        .wc-message-groups {
+            top: 90px;
+        }
+    }
+}
+
+.chat-button {
+    background-image: url('./goio-square-dots-40.png');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.chat-button-icon {
+    display: block;
+    width: 60px;
+    height: 60px;
+    
+    svg {
+        display: none;
+    }
+}
+
+
+
+
+

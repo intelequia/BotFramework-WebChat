@@ -13,14 +13,14 @@ $c10: #dbdee1 !default;
 $c11: #d2dde5 !default;
 $c12: #0078d7 !default;
 
-$c_brand: $c07;
-$c_line: $c05;
-$c_shadow: $c02;
-$c_chrome: $c10;
-$c_textHeading: $c08;
-$c_textLight: $c04;
-$c_textLink: $c07;
+$c_brand: $c07 !default;
+$c_line: $c05 !default;
+$c_shadow: $c02 !default;
+$c_chrome: $c10 !default;
+$c_textHeading: $c08 !default;
+$c_textLight: $c04 !default;
+$c_textLink: $c07 !default;
 
-$c_messageFromMe: $c_brand;
-$c_messageFromThem: $c09;
-$c_timestamp: $c06;
+$c_messageFromMe: $c03 !default;
+$c_messageFromThem: $c09 !default;
+$c_timestamp: $c06 !default;

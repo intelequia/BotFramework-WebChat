@@ -158,6 +158,7 @@ export interface FormatState {
     carouselMargin: number;
     botIconUrl: string;
     chatIconColor: string;
+    chatIconMessage: string;
     showBrandMessage: boolean;
     brandMessage: string;
 }
@@ -181,6 +182,9 @@ export type FormatAction = {
     type: 'Set_ChatIcon_Color',
     chatIconColor: string
 } | {
+    type: 'Set_ChatIcon_Message',
+    chatIconMessage: string
+} | {
     type: 'Set_BrandMessage_Status',
     showBrandMessage: boolean
 } | {
@@ -197,6 +201,7 @@ export const format: Reducer<FormatState> = (
         carouselMargin: undefined,
         botIconUrl: undefined,
         chatIconColor: '#d9534f',
+        chatIconMessage: undefined,
         showBrandMessage: false,
         brandMessage: 'Powered by Intelequia'
     },
@@ -233,6 +238,11 @@ export const format: Reducer<FormatState> = (
             return {
                 ...state,
                 chatIconColor: action.chatIconColor
+            };
+        case 'Set_ChatIcon_Message':
+            return {
+                ...state,
+                chatIconMessage: action.chatIconMessage
             };
         case 'Set_BrandMessage_Status':
             return {

@@ -33,6 +33,7 @@ export interface ChatProps {
     user: User;
     botIconUrl: string;
     chatIconColor: string;
+    chatIconMessage?: string;
     showBrandMessage: boolean;
     brandMessage: string;
     windowStatus: WindowState;
@@ -105,6 +106,10 @@ export class Chat extends React.Component<ChatProps, {}> {
 
         if (typeof props.chatIconColor !== 'undefined') {
             this.store.dispatch<ChatActions>({ type: 'Set_ChatIcon_Color', chatIconColor: props.chatIconColor });
+        }
+
+        if (typeof props.chatIconMessage !== 'undefined' && props.chatIconMessage !== '') {
+            this.store.dispatch<ChatActions>({ type: 'Set_ChatIcon_Message', chatIconMessage: props.chatIconMessage });
         }
 
         if (typeof props.showBrandMessage !== 'undefined') {
@@ -373,6 +378,15 @@ export class Chat extends React.Component<ChatProps, {}> {
         // only render real stuff after we know our dimensions
         return (
             <div>
+                {!!state.format.chatIconMessage &&
+                <div
+                    className={ `chat-button-message ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}` }>
+                    <div className="chat-button-message-arrow"></div>
+                    <a onClick={ this.onClickChatIcon.bind(this) }>
+                        <span>{state.format.chatIconMessage}</span>
+                    </a>
+                </div>
+                }
                 <div
                     className={ `chat-button ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}` }
                     style={{backgroundColor: `${state.format.chatIconColor}`}}>
