@@ -40,6 +40,12 @@ $c_messageFromMe: #8a8a8a;
             top: 90px;
         }
     }
+
+    .wc-message-pane.show-actions {
+        .wc-message-groups {
+            top: 90 + $actionsHeight;
+        }
+    }    
 }
 
 .chat-button {
