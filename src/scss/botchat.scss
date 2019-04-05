@@ -614,7 +614,7 @@
     }
 
     .wc-message-wrapper.carousel .wc-message {
-        max-width: none;
+        max-width: 85%;
         padding-right: 8px;
     }
 
@@ -864,6 +864,7 @@
     .wc-carousel {
         width: 300px;
         position: relative;
+        max-width: 100%;
 
         button.scroll {
             background-color: $c11;
@@ -970,6 +971,7 @@
     .wc-message-from-bot .wc-message-content {
         background-color: $c_messageFromThem;
         color: $c_textHeading;
+        max-width: 300px;
 
         p {
             color: $c_textHeading;
