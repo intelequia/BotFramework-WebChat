@@ -3,10 +3,22 @@
 
     .wc-card {
         border: $card_borderWidth solid transparent;
-        width: $cardWidth - 2 * ($card_padding + $card_borderWidth);
+        width: ($cardWidth - 2 * ($card_padding + $card_borderWidth)) - 5;
     }
 
     .wc-adaptive-card {
-        width: $cardWidth - $card_padding - 4 * $card_borderWidth;
+        // width: $cardWidth - $card_padding - 4 * $card_borderWidth;
+    }
+}
+
+@mixin card-size-without-calc($cardWidth) {
+
+    .wc-card {
+        border: $card_borderWidth solid transparent;
+        width: $cardWidth;
+    }
+
+    .wc-adaptive-card {
+        // width: $cardWidth - $card_padding - 4 * $card_borderWidth;
     }
 }
