@@ -1,0 +1,48 @@
+$c07: #a08f6b;
+$c12: #918261;
+
+@import "botchat";
+
+.wc-header {
+    background-color: $c07;
+    color: white;
+
+    svg {
+        fill: white;
+    }
+
+    @media (min-width: 470px) and (min-height: 600px) {
+        height: 85px;
+        background-image: url('/images/webchat/header-logo-01.png');
+        background-repeat: no-repeat;
+        background-position: center;
+
+        .bot-icon {
+            display: none;
+        }
+
+        span {
+            display: none;
+        }
+
+        .chat-close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    }
+}
+
+@media (min-width: 470px) and (min-height: 600px) {
+    .wc-message-pane {
+        .wc-message-groups {
+            top: 100px;
+        }
+    }
+
+    .wc-message-pane.show-actions {
+        .wc-message-groups {
+            top: 90 + $actionsHeight;
+        }
+    }    
+}
