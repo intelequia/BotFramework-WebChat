@@ -12,7 +12,7 @@ $c12: #918261;
     }
 
     @media (min-width: 470px) and (min-height: 600px) {
-        height: 60px;
+        height: 50px;
         background-image: url('/images/webchat/header-logo-01.png');
         background-repeat: no-repeat;
         background-position: center;
@@ -36,7 +36,7 @@ $c12: #918261;
 @media (min-width: 470px) and (min-height: 600px) {
     .wc-message-pane {
         .wc-message-groups {
-            top: 75px;
+            top: 65px;
         }
     }
 
