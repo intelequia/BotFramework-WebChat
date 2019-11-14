@@ -69,7 +69,8 @@
     "tslint": "5.10.0",
     "tslint-loader": "3.6.0",
     "typescript": "2.3",
-    "webpack": "2.3.3"
+    "webpack": "2.3.3",
+    "webpack-dev-server": "^3.1.14"
   },
   "peerDependencies": {
     "react": "^15.6.1 || ^16",

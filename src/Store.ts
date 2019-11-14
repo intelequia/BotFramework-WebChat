@@ -408,7 +408,7 @@ export const history: Reducer<HistoryState> = (
     switch (action.type) {
         case 'Receive_Sent_Message': {
             // if (!action.activity.channelData || !action.activity.channelData.clientActivityId) {
-            if (action.activity.channelData && action.activity.channelData.postBack) {
+            if (action.activity.channelData && (action.activity.channelData.postBack || action.activity.channelData.postback)) {
                 // only postBack messages don't have clientActivityId, and these shouldn't be added to the history
                 return state;
             }

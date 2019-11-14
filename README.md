@@ -130,6 +130,12 @@ This builds the following:
 * `/botchat-es5.js` is the Webpack bundle (a.k.a. `botchat.js`) plus polyfills for ES5 browsers
 * `/botchat-fullwindow.css` media query stylesheet for a full-window experience
 
+## Debugging the Web Chat
+
+1. `webpack.run.cmd` (to run the webpack web server)
+2. Change the URL of your botchat to the URL provided by webpack-dev-server (usually http://localhost:8080/botchat.js)
+3. In the web browser, you should be able to view and debug the source code of the webchat project
+
 ## Customizing Web Chat
 
 ### Enabling Speech Capabilities
