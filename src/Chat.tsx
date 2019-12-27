@@ -11,7 +11,7 @@ import { getTabIndex } from './getTabIndex';
 import * as konsole from './Konsole';
 import { Speech } from './SpeechModule';
 import { SpeechOptions } from './SpeechOptions';
-import { ChatActions, createStore, sendMessage, WindowState } from './Store';
+import { ChatActions, createStore, HistoryAction, sendMessage, WindowState } from './Store';
 import { ActivityOrID, FormatOptions } from './Types';
 
 import { Cookies } from 'react-cookie';
@@ -25,6 +25,7 @@ export interface ChatProps {
     disabled?: boolean;
     formatOptions?: FormatOptions;
     locale?: string;
+    history?: Activity[];
     resize?: 'none' | 'window' | 'detect';
     selectedActivity?: BehaviorSubject<ActivityOrID>;
     sendTyping?: boolean;
@@ -92,6 +93,13 @@ export class Chat extends React.Component<ChatProps, {}> {
         super(props);
 
         konsole.log('BotChat.Chat props', props);
+
+        if (props.history) {
+            this.store.dispatch<HistoryAction>({
+                type: 'Set_History',
+                activities: props.history
+            });
+        }
 
         this.store.dispatch<ChatActions>({
             type: 'Set_Locale',
@@ -251,9 +259,24 @@ export class Chat extends React.Component<ChatProps, {}> {
     }
 
     startConnection() {
-        const botConnection = this.props.directLine
-                                ? (this.botConnection = new DirectLine(this.props.directLine))
-                                : this.props.botConnection;
+        let botconnectionDirectLine: DirectLine;
+
+        if (this.props.directLine) {
+            botconnectionDirectLine = new DirectLine(this.props.directLine);
+            botconnectionDirectLine.connectionStatus$.subscribe(
+                (status: ConnectionStatus) => {
+                    if (status === 2) {  // wait for connection is 'OnLine' set cookie
+                        // Set the cookies Bot-ConversationId
+                        const cookie = new Cookies();
+                        cookie.set('Bot-ConversationId', botconnectionDirectLine.conversationId, { path: '/' });
+                    }
+                }
+            );
+            const cookie = new Cookies();
+            cookie.set('Bot-ConversationId', botconnectionDirectLine.conversationId, { path: '/' });
+        }
+
+        const botConnection = this.props.directLine ? botconnectionDirectLine : this.props.botConnection;
 
         if (this.props.resize === 'window') {
             window.addEventListener('resize', this.resizeListener);
@@ -268,7 +291,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                         this.props.speechOptions.speechRecognizer.referenceGrammarId = refGrammarId;
                     }
                 }
-                if (connectionStatus === ConnectionStatus.Online) {
+                if (connectionStatus === ConnectionStatus.Online && !this.props.history) {
                     sendEventPostBack(botConnection, 'StartConversation', {locale: this.props.locale}, this.user);
                 }
                 this.store.dispatch<ChatActions>({ type: 'Connection_Change', connectionStatus });

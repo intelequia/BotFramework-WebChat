@@ -387,6 +387,9 @@ export type HistoryAction = {
 } | {
     type: 'Clear_Typing',
     id: string
+} | {
+    type: 'Set_History',
+    activities: Activity[]
 };
 
 const copyArrayWithUpdatedItem = <T>(array: T[], i: number, item: T) => [
@@ -406,6 +409,11 @@ export const history: Reducer<HistoryState> = (
 ) => {
     konsole.log('history action', action);
     switch (action.type) {
+        case 'Set_History':
+            return {
+                ... state,
+                activities: [... action.activities]
+        };
         case 'Receive_Sent_Message': {
             // if (!action.activity.channelData || !action.activity.channelData.clientActivityId) {
             if (action.activity.channelData && (action.activity.channelData.postBack || action.activity.channelData.postback)) {
