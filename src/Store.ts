@@ -161,6 +161,7 @@ export interface FormatState {
     chatIconMessage: string;
     showBrandMessage: boolean;
     brandMessage: string;
+    hideHeader: boolean;
 }
 
 export type FormatAction = {
@@ -185,6 +186,9 @@ export type FormatAction = {
     type: 'Set_ChatIcon_Message',
     chatIconMessage: string
 } | {
+    type: 'Set_HideHeader',
+    hideHeader: boolean
+} | {
     type: 'Set_BrandMessage_Status',
     showBrandMessage: boolean
 } | {
@@ -203,7 +207,8 @@ export const format: Reducer<FormatState> = (
         chatIconColor: '#d9534f',
         chatIconMessage: undefined,
         showBrandMessage: false,
-        brandMessage: 'Powered by Intelequia'
+        brandMessage: 'Powered by Intelequia',
+        hideHeader: false
     },
     action: FormatAction
 ) => {
@@ -253,6 +258,11 @@ export const format: Reducer<FormatState> = (
             return {
                 ...state,
                 brandMessage: action.brandMessage
+            };
+        case 'Set_HideHeader':
+            return {
+                ...state,
+                hideHeader: action.hideHeader
             };
         default:
             return state;

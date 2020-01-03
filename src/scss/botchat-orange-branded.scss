@@ -4,9 +4,14 @@ $c_messageFromMe: #8a8a8a;
 
 @import "botchat";
 
+.wc-header.wc-hide {
+    display: none;
+}
+
 .wc-header {
     background-color: $c07;
     color: white;
+
 
     svg {
         fill: white;
@@ -41,11 +46,22 @@ $c_messageFromMe: #8a8a8a;
         }
     }
 
+    .wc-message-pane {
+        .wc-message-groups.no-header{
+            top: 0px;
+        }
+    }
+
     .wc-message-pane.show-actions {
         .wc-message-groups {
             top: 90 + $actionsHeight;
         }
     }    
+    .wc-message-pane.show-actions {
+        .wc-message-groups.no-header {
+            top: 0 + $actionsHeight;
+        }
+    }
 }
 
 .chat-button {

@@ -38,6 +38,7 @@ export interface ChatProps {
     showBrandMessage: boolean;
     brandMessage: string;
     windowStatus: WindowState;
+    hideHeader: boolean;
 }
 
 import { History } from './History';
@@ -127,6 +128,10 @@ export class Chat extends React.Component<ChatProps, {}> {
             } else {
                 this.store.dispatch<ChatActions>({ type: 'Set_BrandMessage', brandMessage: 'Powered by Intelequia' });
             }
+        }
+
+        if (typeof props.hideHeader !== 'undefined') {
+            this.store.dispatch<ChatActions>({ type: 'Set_HideHeader', hideHeader: props.hideHeader });
         }
 
         if (props.adaptiveCardsHostConfig) {
@@ -434,7 +439,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                         >
                             {
                                 !!state.format.chatTitle &&
-                                    <div className="wc-header">
+                                    <div className={ `wc-header ${state.format.hideHeader ? 'wc-hide' : '' }` }>
                                         {headerBotIcon}
                                         <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
                                         {headerCloseButton}
