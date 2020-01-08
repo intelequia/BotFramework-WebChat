@@ -95,7 +95,7 @@ export class Chat extends React.Component<ChatProps, {}> {
 
         konsole.log('BotChat.Chat props', props);
 
-        if (props.history) {
+        if (props.history && props.history.length > 0) {
             this.store.dispatch<HistoryAction>({
                 type: 'Set_History',
                 activities: props.history
@@ -264,24 +264,9 @@ export class Chat extends React.Component<ChatProps, {}> {
     }
 
     startConnection() {
-        let botconnectionDirectLine: DirectLine;
-
-        if (this.props.directLine) {
-            botconnectionDirectLine = new DirectLine(this.props.directLine);
-            botconnectionDirectLine.connectionStatus$.subscribe(
-                (status: ConnectionStatus) => {
-                    if (status === 2) {  // wait for connection is 'OnLine' set cookie
-                        // Set the cookies Bot-ConversationId
-                        const cookie = new Cookies();
-                        cookie.set('Bot-ConversationId', botconnectionDirectLine.conversationId, { path: '/' });
-                    }
-                }
-            );
-            const cookie = new Cookies();
-            cookie.set('Bot-ConversationId', botconnectionDirectLine.conversationId, { path: '/' });
-        }
-
-        const botConnection = this.props.directLine ? botconnectionDirectLine : this.props.botConnection;
+        const botConnection = this.props.directLine
+        ? (this.botConnection = new DirectLine(this.props.directLine))
+        : this.props.botConnection;
 
         if (this.props.resize === 'window') {
             window.addEventListener('resize', this.resizeListener);
