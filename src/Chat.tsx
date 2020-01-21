@@ -485,11 +485,9 @@ export const doCardAction = (
                     sendMessage(text, from, locale);
                 }
                 break;
-
             case 'postBack':
                 sendPostBack(botConnection, text, value, from, locale);
                 break;
-
             case 'call':
             case 'openUrl':
             case 'playAudio':
