@@ -25,7 +25,7 @@ export interface ChatProps {
     disabled?: boolean;
     formatOptions?: FormatOptions;
     locale?: string;
-    history?: Activity[];
+    history?: () => Promise<Activity[]>;
     resize?: 'none' | 'window' | 'detect';
     selectedActivity?: BehaviorSubject<ActivityOrID>;
     sendTyping?: boolean;
@@ -68,6 +68,8 @@ export class Chat extends React.Component<ChatProps, {}> {
     private _saveChatviewPanelRef = this.saveChatviewPanelRef.bind(this);
     private _saveHistoryRef = this.saveHistoryRef.bind(this);
     private _saveShellRef = this.saveShellRef.bind(this);
+
+    private hasHistory: boolean;
     // tslint:enable:variable-name
 
     getUser() {
@@ -94,13 +96,6 @@ export class Chat extends React.Component<ChatProps, {}> {
         super(props);
 
         konsole.log('BotChat.Chat props', props);
-
-        if (props.history && props.history.length > 0) {
-            this.store.dispatch<HistoryAction>({
-                type: 'Set_History',
-                activities: props.history
-            });
-        }
 
         this.store.dispatch<ChatActions>({
             type: 'Set_Locale',
@@ -169,6 +164,8 @@ export class Chat extends React.Component<ChatProps, {}> {
             Speech.SpeechRecognizer.setSpeechRecognizer(props.speechOptions.speechRecognizer);
             Speech.SpeechSynthesizer.setSpeechSynthesizer(props.speechOptions.speechSynthesizer);
         }
+
+        this.hasHistory = false; // We dont know yet if it has history indeed
     }
 
     private handleIncomingActivity(activity: Activity) {
@@ -265,42 +262,52 @@ export class Chat extends React.Component<ChatProps, {}> {
 
     startConnection() {
         const botConnection = this.props.directLine
-        ? (this.botConnection = new DirectLine(this.props.directLine))
-        : this.props.botConnection;
+            ? (this.botConnection = new DirectLine(this.props.directLine))
+            : this.props.botConnection;
 
         if (this.props.resize === 'window') {
             window.addEventListener('resize', this.resizeListener);
         }
-        // this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.props.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
-        this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
+        this.props.history().then(value => {
+            if (value.length > 0) {
+                this.store.dispatch<HistoryAction>({
+                    type: 'Set_History',
+                    activities: value
+                });
+                this.hasHistory = true;
+            }
+        }).then(_ => {
+            // this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.props.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
+            this.store.dispatch<ChatActions>({ type: 'Start_Connection', user: this.user, bot: this.props.bot, botConnection, selectedActivity: this.props.selectedActivity });
 
-        this.connectionStatusSubscription = botConnection.connectionStatus$.subscribe(connectionStatus => {
+            this.connectionStatusSubscription = botConnection.connectionStatus$.subscribe(connectionStatus => {
                 if (this.props.speechOptions && this.props.speechOptions.speechRecognizer) {
                     const refGrammarId = botConnection.referenceGrammarId;
                     if (refGrammarId) {
                         this.props.speechOptions.speechRecognizer.referenceGrammarId = refGrammarId;
                     }
                 }
-                if (connectionStatus === ConnectionStatus.Online && !this.props.history) {
-                    sendEventPostBack(botConnection, 'StartConversation', {locale: this.props.locale}, this.user);
+                if (connectionStatus === ConnectionStatus.Online && !this.hasHistory) {
+                    sendEventPostBack(botConnection, 'StartConversation', { locale: this.props.locale }, this.user);
                 }
                 this.store.dispatch<ChatActions>({ type: 'Connection_Change', connectionStatus });
             }
-        );
+            );
 
-        this.activitySubscription = botConnection.activity$.subscribe(
-            activity => this.handleIncomingActivity(activity),
-            error => konsole.log('activity$ error', error)
-        );
+            this.activitySubscription = botConnection.activity$.subscribe(
+                activity => this.handleIncomingActivity(activity),
+                error => konsole.log('activity$ error', error)
+            );
 
-        if (this.props.selectedActivity) {
-            this.selectedActivitySubscription = this.props.selectedActivity.subscribe(activityOrID => {
-                this.store.dispatch<ChatActions>({
-                    type: 'Select_Activity',
-                    selectedActivity: activityOrID.activity || this.store.getState().history.activities.find(activity => activity.id === activityOrID.id)
+            if (this.props.selectedActivity) {
+                this.selectedActivitySubscription = this.props.selectedActivity.subscribe(activityOrID => {
+                    this.store.dispatch<ChatActions>({
+                        type: 'Select_Activity',
+                        selectedActivity: activityOrID.activity || this.store.getState().history.activities.find(activity => activity.id === activityOrID.id)
+                    });
                 });
-            });
-        }
+            }
+        });
     }
 
     componentWillMount() {
@@ -309,11 +316,9 @@ export class Chat extends React.Component<ChatProps, {}> {
     componentDidMount() {
         // Now that we're mounted, we know our dimensions. Put them in the store (this will force a re-render)
         this.setSize();
-
         if (this.store.getState().windowState.visible) {
             this.startConnection();
         }
-
         this.firstLoad = false;
     }
 
@@ -357,11 +362,12 @@ export class Chat extends React.Component<ChatProps, {}> {
             type: 'Set_Status',
             visible: true
         });
-
         if (!this.store.getState().connection.botConnection) {  // If this is the first time the chat window is opened, we have to start the conversation
-            this.startConnection();
+            this.props.history().then(value => {
+                this.startConnection();
+                this.forceUpdate(); // I had to do this; I don't know why this dispatch doesn't force a re-render
+            });
         }
-
         this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
     }
 
@@ -382,28 +388,28 @@ export class Chat extends React.Component<ChatProps, {}> {
         const state = this.store.getState();
         konsole.log('BotChat.Chat state', state);
 
-        const headerBotIcon = state.format.botIconUrl ? <div className="bot-icon" style={{backgroundImage: `url(${state.format.botIconUrl})`}}></div> : <div></div>;
-        const headerCloseButton =   <div onClick={this.onCloseWindow.bind(this)} className="chat-close-button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
-                                            <path d="M1115 1024 L1658 1567 Q1677 1586 1677 1612.5 Q1677 1639 1658 1658 Q1639 1676 1612 1676 Q1587 1676 1567 1658 L1024 1115 L481 1658 Q462 1676 436 1676 Q410 1676 390 1658 Q371 1639 371 1612.5 Q371 1586 390 1567 L934 1024 L390 481 Q371 462 371 435.5 Q371 409 390 390 Q410 372 436 372 Q462 372 481 390 L1024 934 L1567 390 Q1587 372 1612 372 Q1639 372 1658 390 Q1677 409 1677 435.5 Q1677 462 1658 481 L1115 1024 Z "></path>
-                                        </svg>
-                                    </div>;
+        const headerBotIcon = state.format.botIconUrl ? <div className="bot-icon" style={{ backgroundImage: `url(${state.format.botIconUrl})` }}></div> : <div></div>;
+        const headerCloseButton = <div onClick={this.onCloseWindow.bind(this)} className="chat-close-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048">
+                <path d="M1115 1024 L1658 1567 Q1677 1586 1677 1612.5 Q1677 1639 1658 1658 Q1639 1676 1612 1676 Q1587 1676 1567 1658 L1024 1115 L481 1658 Q462 1676 436 1676 Q410 1676 390 1658 Q371 1639 371 1612.5 Q371 1586 390 1567 L934 1024 L390 481 Q371 462 371 435.5 Q371 409 390 390 Q410 372 436 372 Q462 372 481 390 L1024 934 L1567 390 Q1587 372 1612 372 Q1639 372 1658 390 Q1677 409 1677 435.5 Q1677 462 1658 481 L1115 1024 Z "></path>
+            </svg>
+        </div>;
         // only render real stuff after we know our dimensions
         return (
             <div>
                 {!!state.format.chatIconMessage &&
-                <div
-                    className={ `chat-button-message ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}` }>
-                    <div className="chat-button-message-arrow"></div>
-                    <a onClick={ this.onClickChatIcon.bind(this) }>
-                        <span>{state.format.chatIconMessage}</span>
-                    </a>
-                </div>
+                    <div
+                        className={`chat-button-message ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}`}>
+                        <div className="chat-button-message-arrow"></div>
+                        <a onClick={this.onClickChatIcon.bind(this)}>
+                            <span>{state.format.chatIconMessage}</span>
+                        </a>
+                    </div>
                 }
                 <div
-                    className={ `chat-button ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}` }
-                    style={{backgroundColor: `${state.format.chatIconColor}`}}>
-                    <a onClick={ this.onClickChatIcon.bind(this) } className="chat-button-icon">
+                    className={`chat-button ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}`}
+                    style={{ backgroundColor: `${state.format.chatIconColor}` }}>
+                    <a onClick={this.onClickChatIcon.bind(this)} className="chat-button-icon">
                         <span>
                             <svg viewBox="0 0 256 256">
                                 <g>
@@ -413,40 +419,40 @@ export class Chat extends React.Component<ChatProps, {}> {
                         </span>
                     </a>
                 </div>
-                <Provider store={ this.store }>
+                <Provider store={this.store}>
                     <div
-                        className={ `chat-window ${state.windowState.visible ? 'open' : 'close'}-chat-${this.firstLoad ? 'no-animate' : 'animate'}` }>
+                        className={`chat-window ${state.windowState.visible ? 'open' : 'close'}-chat-${this.firstLoad ? 'no-animate' : 'animate'}`}>
                         <div
                             className="wc-chatview-panel"
                             // className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : this.firstLoad ? 'close-chat-no-animate' : 'close-chat-animate'}` }
-                            onKeyDownCapture={ this._handleKeyDownCapture }
-                            ref={ this._saveChatviewPanelRef }
+                            onKeyDownCapture={this._handleKeyDownCapture}
+                            ref={this._saveChatviewPanelRef}
                         >
                             {
                                 !!state.format.chatTitle &&
-                                    <div className={ `wc-header ${state.format.hideHeader ? 'wc-hide' : '' }` }>
-                                        {headerBotIcon}
-                                        <span>{ typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title }</span>
-                                        {headerCloseButton}
-                                    </div>
+                                <div className={`wc-header ${state.format.hideHeader ? 'wc-hide' : ''}`}>
+                                    {headerBotIcon}
+                                    <span>{typeof state.format.chatTitle === 'string' ? state.format.chatTitle : state.format.strings.title}</span>
+                                    {headerCloseButton}
+                                </div>
                             }
-                            <MessagePane disabled={ this.props.disabled }>
+                            <MessagePane disabled={this.props.disabled}>
                                 <History
-                                    disabled={ this.props.disabled }
-                                    onCardAction={ this._handleCardAction }
-                                    ref={ this._saveHistoryRef }
-                                    showBrandMessage={ state.format.showBrandMessage }
+                                    disabled={this.props.disabled}
+                                    onCardAction={this._handleCardAction}
+                                    ref={this._saveHistoryRef}
+                                    showBrandMessage={state.format.showBrandMessage}
                                 />
                             </MessagePane>
                             {
                                 !this.props.disabled && <Shell
-                                                            ref={ this._saveShellRef }
-                                                            showBrandMessage={ state.format.showBrandMessage }
-                                                        />
+                                    ref={this._saveShellRef}
+                                    showBrandMessage={state.format.showBrandMessage}
+                                />
                             }
                             {
                                 this.props.resize === 'detect' &&
-                                    <ResizeDetector onresize={ this.resizeListener } />
+                                <ResizeDetector onresize={this.resizeListener} />
                             }
                             {
                                 state.format.showBrandMessage && <div className="wc-brandmessage">{state.format.brandMessage}</div>
@@ -470,46 +476,46 @@ export const doCardAction = (
     type,
     actionValue
 ) => {
-    const text = (typeof actionValue === 'string') ? actionValue as string : undefined;
-    const value = (typeof actionValue === 'object') ? actionValue as object : undefined;
+        const text = (typeof actionValue === 'string') ? actionValue as string : undefined;
+        const value = (typeof actionValue === 'object') ? actionValue as object : undefined;
 
-    switch (type) {
-        case 'imBack':
-            if (typeof text === 'string') {
-                sendMessage(text, from, locale);
-            }
-            break;
+        switch (type) {
+            case 'imBack':
+                if (typeof text === 'string') {
+                    sendMessage(text, from, locale);
+                }
+                break;
 
-        case 'postBack':
-            sendPostBack(botConnection, text, value, from, locale);
-            break;
+            case 'postBack':
+                sendPostBack(botConnection, text, value, from, locale);
+                break;
 
-        case 'call':
-        case 'openUrl':
-        case 'playAudio':
-        case 'playVideo':
-        case 'showImage':
-        case 'downloadFile':
-            window.open(text);
-            break;
-        case 'signin':
-            const loginWindow = window.open();
-            if (botConnection.getSessionId)  {
-                botConnection.getSessionId().subscribe(sessionId => {
-                    konsole.log('received sessionId: ' + sessionId);
-                    loginWindow.location.href = text + encodeURIComponent('&code_challenge=' + sessionId);
-                }, error => {
-                    konsole.log('failed to get sessionId', error);
-                });
-            } else {
-                loginWindow.location.href = text;
-            }
-            break;
+            case 'call':
+            case 'openUrl':
+            case 'playAudio':
+            case 'playVideo':
+            case 'showImage':
+            case 'downloadFile':
+                window.open(text);
+                break;
+            case 'signin':
+                const loginWindow = window.open();
+                if (botConnection.getSessionId) {
+                    botConnection.getSessionId().subscribe(sessionId => {
+                        konsole.log('received sessionId: ' + sessionId);
+                        loginWindow.location.href = text + encodeURIComponent('&code_challenge=' + sessionId);
+                    }, error => {
+                        konsole.log('failed to get sessionId', error);
+                    });
+                } else {
+                    loginWindow.location.href = text;
+                }
+                break;
 
-        default:
-            konsole.log('unknown button type', type);
+            default:
+                konsole.log('unknown button type', type);
         }
-};
+    };
 
 export const sendPostBack = (botConnection: IBotConnection, text: string, value: object, from: User, locale: string) => {
     botConnection.postActivity({
@@ -522,10 +528,10 @@ export const sendPostBack = (botConnection: IBotConnection, text: string, value:
             postback: true
         }
     })
-    .subscribe(
-        id => konsole.log('success sending postBack', id),
-        error => konsole.log('failed to send postBack', error)
-    );
+        .subscribe(
+            id => konsole.log('success sending postBack', id),
+            error => konsole.log('failed to send postBack', error)
+        );
 };
 
 export const sendEventPostBack = (botConnection: IBotConnection, name: string, value: object, from: User) => {
@@ -538,13 +544,13 @@ export const sendEventPostBack = (botConnection: IBotConnection, name: string, v
             postback: true
         }
     })
-    .subscribe(
-        id => konsole.log('success sending postBack', id),
-        error => konsole.log('failed to send postBack', error)
-    );
+        .subscribe(
+            id => konsole.log('success sending postBack', id),
+            error => konsole.log('failed to send postBack', error)
+        );
 };
 
-export const renderIfNonempty = (value: any, renderer: (value: any) => JSX.Element ) => {
+export const renderIfNonempty = (value: any, renderer: (value: any) => JSX.Element) => {
     if (value !== undefined && value !== null && (typeof value !== 'string' || value.length > 0)) {
         return renderer(value);
     }
@@ -572,11 +578,11 @@ const ResizeDetector = (props: {
             visibility: 'hidden',
             width: '100%'
         }}
-        ref={ frame => {
+        ref={frame => {
             if (frame) {
                 frame.contentWindow.onresize = props.onresize;
             }
-        } }
+        }}
     />;
 
 // For auto-focus in some browsers, we synthetically insert keys into the chatbox.
