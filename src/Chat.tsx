@@ -76,18 +76,18 @@ export class Chat extends React.Component<ChatProps, {}> {
         const user = { ...this.props.user };
 
         if (!this.props.user) {
-            // Get the cookies Bot-UserId and Bot-UserName
+            // Get the cookies bui and bun
             const cookie = new Cookies();
-            const botUserId = cookie.get('Bot-UserId');
-            const botUserName = cookie.get('Bot-UserName');
+            const botUserId = cookie.get('bui');
+            const botUserName = cookie.get('bun');
 
             user.id = botUserId ? botUserId : `${this.store.getState().format.strings.anonymousUsername} ${(Math.random() * 1000000).toString().substring(0, 5)}`;
             user.name = botUserName ? botUserName : user.id;
             user.role = 'user';
 
-            // Set the cookies Bot-UserId and Bot-UserName
-            cookie.set('Bot-UserId', user.id, { path: '/' });
-            cookie.set('Bot-UserName', user.name, { path: '/' });
+            // Set the cookies bui and bun
+            cookie.set('bui', user.id, { path: '/', maxAge: 1000 * 3600 });
+            cookie.set('bun', user.name, { path: '/', maxAge: 1000 * 3600 });
         }
 
         return user;
@@ -288,6 +288,12 @@ export class Chat extends React.Component<ChatProps, {}> {
                     }
                 }
                 if (connectionStatus === ConnectionStatus.Online && !this.hasHistory) {
+                    const cookie = new Cookies();
+                    const b  = botConnection as DirectLine;
+                    const conversationId = cookie.get('bci');
+                    if (!conversationId && b && b.conversationId) {
+                        cookie.set('bci', b.conversationId, { path: '/', maxAge: 1000 * 3600 });
+                    }
                     sendEventPostBack(botConnection, 'StartConversation', { locale: this.props.locale }, this.user);
                 }
                 this.store.dispatch<ChatActions>({ type: 'Connection_Change', connectionStatus });
