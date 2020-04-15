@@ -374,6 +374,8 @@ export class Chat extends React.Component<ChatProps, {}> {
                 this.forceUpdate(); // I had to do this; I don't know why this dispatch doesn't force a re-render
             });
         }
+        const cookies = new Cookies();
+        cookies.set('bco', true, { path: '/', maxAge: 1000 * 3600 });
         this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
     }
 
@@ -382,6 +384,8 @@ export class Chat extends React.Component<ChatProps, {}> {
             type: 'Set_Status',
             visible: false
         });
+        const cookies = new Cookies();
+        cookies.set('bco', false, { path: '/', maxAge: 1000 * 3600 });
         this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
     }
 
