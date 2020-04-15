@@ -16,5 +16,11 @@ module.exports = webpackDevConfig.map(config => ({
             sourceMap: true
         }),
         new webpack.optimize.OccurrenceOrderPlugin(),
-    ]
+    ],
+    /*optimization: {
+        minimize: false,
+        /*minimizer: [new UglifyJsPlugin({
+          include: /\.min\.js$/
+        })]
+      }*/
 }));
