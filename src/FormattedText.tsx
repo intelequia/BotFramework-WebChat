@@ -38,13 +38,16 @@ const defaultRender = markdownIt.renderer.rules.link_open || ((tokens, idx, opti
 });
 
 markdownIt.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+    const urlParts =  window.location.href.split('/');
+    let domain = urlParts[0]  === 'http:' || urlParts[0]  === 'https:' ? urlParts[2] : urlParts[0];
+    domain = domain.replace('www.', '');
+    const target: string = tokens[idx].attrGet('href').includes(domain) ? '_top' : '_blank';
     // If you are sure other plugins can't add `target` - drop check below
     const targetIndex = tokens[idx].attrIndex('target');
-
     if (targetIndex < 0) {
-        tokens[idx].attrPush(['target', '_blank']); // add new attribute
+        tokens[idx].attrPush(['target', target]); // add new attribute
     } else {
-        tokens[idx].attrs[targetIndex][1] = '_blank';    // replace value of existing attr
+        tokens[idx].attrs[targetIndex][1] = target;    // replace value of existing attr
     }
 
     // pass token to default renderer.
