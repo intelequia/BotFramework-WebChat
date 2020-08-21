@@ -180,6 +180,11 @@ export class Chat extends React.Component<ChatProps, {}> {
                     this.store.dispatch<ChatActions>({ type: 'Show_Typing', activity });
                 }
                 break;
+            case 'event':
+                if (activity.value.Item1 === 'Set_Status' && !activity.value.Item2) {
+                    this.onCloseWindow();
+                }
+                break;
         }
     }
 
@@ -289,7 +294,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                 }
                 if (connectionStatus === ConnectionStatus.Online && !this.hasHistory) {
                     const cookie = new Cookies();
-                    const b  = botConnection as DirectLine;
+                    const b = botConnection as DirectLine;
                     const conversationId = cookie.get('bci');
                     if (!conversationId && b && b.conversationId) {
                         cookie.set('bci', b.conversationId, { path: '/', maxAge: 1000 * 3600 });
