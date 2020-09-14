@@ -120,6 +120,10 @@ Different projects have different build strategies, yours may vary considerably 
 2. `npm install`
 3. `npm run build` (to build on every change `npm run watch`, to build production `npm run prepublish`)
 
+```diff
+- If you get an error while compiling, install version 2.0.0 of typescript
+```
+
 This builds the following:
 
 * `/built/*.js` compiled from the TypeScript sources in `/src/*.js` - `/built/BotChat.js` is the root
