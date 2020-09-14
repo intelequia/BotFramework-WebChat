@@ -86,8 +86,8 @@ export class Chat extends React.Component<ChatProps, {}> {
             user.role = 'user';
 
             // Set the cookies bui and bun
-            cookie.set('bui', user.id, { path: '/', maxAge: 1000 * 3600 });
-            cookie.set('bun', user.name, { path: '/', maxAge: 1000 * 3600 });
+            cookie.set('bui', user.id, { path: '/', maxAge: 14 * 24 * 3600 });
+            cookie.set('bun', user.name, { path: '/', maxAge: 14 * 24 * 3600 });
         }
 
         return user;
@@ -297,7 +297,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                     const b = botConnection as DirectLine;
                     const conversationId = cookie.get('bci');
                     if (!conversationId && b && b.conversationId) {
-                        cookie.set('bci', b.conversationId, { path: '/', maxAge: 1000 * 3600 });
+                        cookie.set('bci', b.conversationId, { path: '/', maxAge: 14 * 24 * 3600 });
                     }
                     sendEventPostBack(botConnection, 'StartConversation', { locale: this.props.locale }, this.user);
                 }
