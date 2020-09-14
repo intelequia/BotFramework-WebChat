@@ -121,7 +121,7 @@ Different projects have different build strategies, yours may vary considerably 
 3. `npm run build` (to build on every change `npm run watch`, to build production `npm run prepublish`)
 
 ```diff
-- If you get an error while compiling, install version 2.0.0 of typescript
+- If you get an error while compiling, install version 2.0.0 of typescript globally
 ```
 
 This builds the following:
