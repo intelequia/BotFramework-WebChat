@@ -59,6 +59,7 @@ export class Chat extends React.Component<ChatProps, {}> {
     private historyRef: React.Component;
     private chatviewPanelRef: HTMLElement;
     private firstLoad: boolean;
+    private showChatIconMessage: boolean;
 
     private resizeListener = () => this.setSize();
 
@@ -323,6 +324,7 @@ export class Chat extends React.Component<ChatProps, {}> {
 
     componentWillMount() {
         this.firstLoad = true;
+        this.showChatIconMessage = true;
     }
     componentDidMount() {
         // Now that we're mounted, we know our dimensions. Put them in the store (this will force a re-render)
@@ -331,6 +333,7 @@ export class Chat extends React.Component<ChatProps, {}> {
             this.startConnection();
         }
         this.firstLoad = false;
+        this.showChatIconMessage = false;
     }
 
     componentWillUnmount() {
@@ -380,7 +383,7 @@ export class Chat extends React.Component<ChatProps, {}> {
             });
         }
         const cookies = new Cookies();
-        cookies.set('bco', true, { path: '/', maxAge: 1000 * 3600 });
+        cookies.set('bco', true, { path: '/', maxAge: 14 * 24 * 3600 });
         this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
     }
 
@@ -390,8 +393,13 @@ export class Chat extends React.Component<ChatProps, {}> {
             visible: false
         });
         const cookies = new Cookies();
-        cookies.set('bco', false, { path: '/', maxAge: 1000 * 3600 });
+        cookies.set('bco', false, { path: '/', maxAge: 14 * 24 * 3600 });
         this.forceUpdate();     // I had to do this; I don't know why this dispatch doesn't force a re-render
+    }
+
+    onCloseChatMessage() {
+        this.showChatIconMessage = false;
+        this.forceUpdate();
     }
 
     // At startup we do three render passes:
@@ -413,16 +421,23 @@ export class Chat extends React.Component<ChatProps, {}> {
         return (
             <div>
                 {!!state.format.chatIconMessage &&
+                    this.showChatIconMessage &&
                     <div
-                        className={`chat-button-message ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}`}>
+                        className={`chat-button-message ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad || !state.windowState.visible ? 'no-animate' : 'animate'}`}>
                         <div className="chat-button-message-arrow"></div>
+                        <a className="chat-button-message-close" onClick={this.onCloseChatMessage.bind(this)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="-38000 0 42000 2048">
+                                <path d="M1115 1024 L1658 1567 Q1677 1586 1677 1612.5 Q1677 1639 1658 1658 Q1639 1676 1612 1676 Q1587 1676 1567 1658 L1024 1115 L481 1658 Q462 1676 436 1676 Q410 1676 390 1658 Q371 1639 371 1612.5 Q371 1586 390 1567 L934 1024 L390 481 Q371 462 371 435.5 Q371 409 390 390 Q410 372 436 372 Q462 372 481 390 L1024 934 L1567 390 Q1587 372 1612 372 Q1639 372 1658 390 Q1677 409 1677 435.5 Q1677 462 1658 481 L1115 1024 Z ">
+                                </path>
+                            </svg>
+                        </a>
                         <a onClick={this.onClickChatIcon.bind(this)}>
                             <span>{state.format.chatIconMessage}</span>
                         </a>
                     </div>
                 }
                 <div
-                    className={`chat-button ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad ? 'no-animate' : 'animate'}`}
+                    className={`chat-button ${state.windowState.visible ? 'open' : 'close'}-button-${this.firstLoad || !state.windowState.visible ? 'no-animate' : 'animate'}`}
                     style={{ backgroundColor: `${state.format.chatIconColor}` }}>
                     <a onClick={this.onClickChatIcon.bind(this)} className="chat-button-icon">
                         <span>
@@ -436,7 +451,7 @@ export class Chat extends React.Component<ChatProps, {}> {
                 </div>
                 <Provider store={this.store}>
                     <div
-                        className={`chat-window ${state.windowState.visible ? 'open' : 'close'}-chat-${this.firstLoad ? 'no-animate' : 'animate'}`}>
+                        className={`chat-window ${state.windowState.visible ? 'open' : 'close'}-chat-${this.firstLoad || !state.windowState.visible ? 'no-animate' : 'animate'}`}>
                         <div
                             className="wc-chatview-panel"
                             // className={ `wc-chatview-panel ${state.windowState.visible ? 'open-chat' : this.firstLoad ? 'close-chat-no-animate' : 'close-chat-animate'}` }

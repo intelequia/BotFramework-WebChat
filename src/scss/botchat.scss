@@ -248,6 +248,11 @@
     border-top: 10px solid $c01;
 }
 
+.chat-button-message-close{
+    position: absolute;
+    width: 100%;
+}
+
 .chat-button {
     margin: 10px;
     position: fixed;
