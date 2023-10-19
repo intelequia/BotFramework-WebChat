@@ -67,6 +67,9 @@ const MinimizableWebChat = (parameters) => {
                 setNewMessage(false);
               case 'ChangeLanguage':
                 setLanguage(action.payload.activity.value)
+              case 'StreamingGPT':
+                console.log(options);
+                console.log(action.payload.activity.value);
             }
           }
         } else if(action.type === 'WEB_CHAT/SEND_MESSAGE'){
