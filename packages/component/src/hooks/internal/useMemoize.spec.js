@@ -1,3 +1,5 @@
+/* eslint no-magic-numbers: "off" */
+
 import useMemoize from './useMemoize';
 
 jest.mock('react', () => {
@@ -5,7 +7,7 @@ jest.mock('react', () => {
   let lastResult;
 
   function arrayEquals(x, y) {
-    return x.length === y.length && x.every((item, index) => Object.is(item, y[index]));
+    return x.length === y.length && [].every.call(x, (item, index) => Object.is(item, y[+index]));
   }
 
   return {

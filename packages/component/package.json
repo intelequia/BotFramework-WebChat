@@ -3,6 +3,7 @@
   "version": "0.0.0-0",
   "description": "React component of botframework-webchat",
   "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -15,68 +16,111 @@
   "bugs": {
     "url": "https://github.com/microsoft/BotFramework-WebChat/issues"
   },
-  "homepage": "https://github.com/microsoft/BotFramework-WebChat/tree/master/packages/component#readme",
+  "files": [
+    "lib/**/*",
+    "src/**/*"
+  ],
+  "homepage": "https://github.com/microsoft/BotFramework-WebChat/tree/main/packages/component#readme",
   "scripts": {
-    "build": "npm run build:typescript && npm run build:babel && npm run build:globalize",
+    "auditfix": "npm audit fix --legacy-peer-deps || exit 0",
+    "build": "npm run build:typescript && npm run build:babel",
     "build:babel": "babel src --copy-files --extensions .js,.ts,.tsx --ignore **/*.spec.js,**/*.spec.ts,**/*.spec.tsx,**/*.test.js,**/*.test.ts,**/*.test.tsx,__tests__/**/*.js,__tests__/**/*.ts,__tests__/**/*.tsx --no-copy-ignored --out-dir lib --verbose",
-    "build:globalize": "node scripts/createPrecompiledGlobalize.js",
     "build:typescript": "tsc --project src/tsconfig.json",
-    "eslint": "eslint src/**/*.js src/**/*.ts",
+    "bump": "npm run bump:prod && npm run bump:dev && npm run bump:auditfix",
+    "bump:auditfix": "npm audit fix --legacy-peer-deps || exit 0",
+    "bump:dev": "if [ `cat package.json | jq -r '.devDependencies | length'` -ne 0 ]; then npm install --legacy-peer-deps $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.devDependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
+    "bump:prod": "if [ `cat package.json | jq -r '.dependencies | length'` -ne 0 ]; then npm install --legacy-peer-deps --save-exact $(cat package.json | jq -r '(.pinDependencies // {}) as $p | ((.dependencies // {}) | keys) | map(. + \"@\" + ($p[.] // [\"latest\"])[0]) | .[]'); fi",
+    "eslint": "npm run precommit",
+    "postauditfix": "npm run postbump",
+    "postbump": "cat package.json | jq '. + (.dependencies = ((.dependencies + (.localPeerDependencies // {})) | to_entries | sort_by(.key) | from_entries)) | (.devDependencies = ((.devDependencies + (.localPeerDevDependencies // {})) | to_entries | sort_by(.key) | from_entries))' > package-temp.json && mv package-temp.json package.json",
+    "preauditfix": "npm run prebump",
+    "prebump": "cat package.json | jq '(((.localPeerDependencies // {}) | keys | map([\"dependencies\", .])) + ((.localPeerDevDependencies // {}) | keys | map([\"devDependencies\", .]))) as $localPeerPaths | delpaths($localPeerPaths)' > package-temp.json && mv package-temp.json package.json",
+    "precommit": "npm run precommit:eslint -- src && npm run precommit:typecheck",
+    "precommit:eslint": "../../node_modules/.bin/eslint --report-unused-disable-directives --max-warnings 0",
+    "precommit:typecheck": "tsc --project ./src --emitDeclarationOnly false --esModuleInterop true --noEmit --pretty false",
     "prestart": "npm run build:babel",
-    "start": "concurrently --kill-others --names \"babel,globalize,tsc\" \"npm run start:babel\" \"npm run start:globalize\" \"npm run start:typescript\"",
+    "start": "concurrently --kill-others --names \"babel,tsc\" \"npm run start:babel\" \"npm run start:typescript\"",
     "start:babel": "npm run build:babel -- --skip-initial-build --watch",
-    "start:globalize": "node-dev --respawn scripts/createPrecompiledGlobalize.js",
     "start:typescript": "npm run build:typescript -- --watch"
   },
-  "cldr-data-coverage": "full",
+  "pinDependencies": {
+    "@babel/cli": [
+      "7.18.10",
+      "@babel/*@7.21 is causing out-of-memory (OOM) issues"
+    ],
+    "@babel/core": [
+      "7.19.1",
+      "@babel/*@7.21 is causing out-of-memory (OOM) issues"
+    ],
+    "@babel/preset-env": [
+      "7.19.1",
+      "@babel/*@7.21 is causing out-of-memory (OOM) issues"
+    ],
+    "@babel/preset-react": [
+      "7.18.6",
+      "@babel/*@7.21 is causing out-of-memory (OOM) issues"
+    ],
+    "@babel/preset-typescript": [
+      "7.18.6",
+      "@babel/*@7.21 is causing out-of-memory (OOM) issues"
+    ],
+    "compute-scroll-into-view": [
+      "1",
+      "@>=2 does not support IE Mode"
+    ],
+    "react-film": [
+      "3.1.1-main.df870ea",
+      "TEMPORARY: Use a custom version to verify build"
+    ],
+    "react-redux": [
+      "7"
+    ]
+  },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.0",
-    "@babel/preset-env": "^7.11.0",
-    "@babel/preset-react": "^7.10.4",
-    "@babel/preset-typescript": "^7.10.4",
-    "@types/node": "^14.6.0",
-    "@types/react": "^16.9.47",
-    "babel-plugin-istanbul": "^6.0.0",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
-    "cldr-data": "^36.0.0",
-    "concurrently": "^5.3.0",
-    "core-js": "^3.6.5",
-    "eslint": "^7.7.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-hooks": "^4.1.0",
-    "globalize-compiler": "^1.1.1",
-    "iana-tz-data": "^2019.1.0",
-    "node-dev": "^5.2.0",
-    "prettier": "^2.1.1",
-    "typescript": "^4.0.2"
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.19.1",
+    "@babel/preset-env": "^7.19.1",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/node": "^20.5.8",
+    "@types/react": "^18.2.21",
+    "babel-plugin-istanbul": "^6.1.1",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.4",
+    "concurrently": "^8.2.1",
+    "core-js": "^3.32.1",
+    "node-dev": "^8.0.0",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
-    "base64-js": "1.3.1",
+    "@emotion/css": "11.11.2",
+    "base64-js": "1.5.1",
+    "botframework-webchat-api": "0.0.0-0",
     "botframework-webchat-core": "0.0.0-0",
-    "classnames": "2.2.6",
-    "create-emotion": "10.0.27",
-    "event-target-shim": "5.0.1",
-    "event-target-shim-es5": "1.2.0",
-    "globalize": "1.5.0",
-    "markdown-it": "11.0.0",
+    "classnames": "2.3.2",
+    "compute-scroll-into-view": "1.0.20",
+    "event-target-shim": "6.0.2",
+    "markdown-it": "13.0.1",
     "math-random": "2.0.1",
-    "memoize-one": "5.1.1",
-    "prop-types": "15.7.2",
-    "react-dictate-button": "1.2.3-master.6b4fe72",
-    "react-film": "3.0.0",
-    "react-redux": "7.2.0",
-    "react-say": "2.0.2-master.ee7cd76",
-    "react-scroll-to-bottom": "4.0.0",
-    "redux": "4.0.5",
-    "remark": "10.0.1",
-    "sanitize-html": "^1.27.4",
+    "mdast": "3.0.0",
+    "mdast-util-from-markdown": "2.0.0",
+    "memoize-one": "6.0.0",
+    "merge-refs": "1.2.1",
+    "prop-types": "15.8.1",
+    "react-dictate-button": "2.0.1",
+    "react-film": "3.1.1-main.df870ea",
+    "react-redux": "7.2.9",
+    "react-say": "2.1.0",
+    "react-scroll-to-bottom": "4.2.0",
+    "redux": "4.2.1",
     "simple-update-in": "2.2.0",
-    "strip-markdown": "3.0.4"
+    "use-ref-from": "0.0.2"
   },
   "peerDependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react": ">= 16.8.6",
+    "react-dom": ">= 16.8.6"
+  },
+  "localPeerDependencies": {
+    "botframework-webchat-api": "0.0.0-0",
+    "botframework-webchat-core": "0.0.0-0"
   }
 }

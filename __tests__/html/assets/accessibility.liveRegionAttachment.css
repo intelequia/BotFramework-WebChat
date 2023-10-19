@@ -1,0 +1,16 @@
+.webchat__live-region-activity,
+.webchat__live-region-transcript__note,
+.webchat__live-region-transcript__text-element {
+  color: initial !important;
+  height: initial !important;
+  opacity: initial !important;
+  overflow: initial !important;
+  position: initial !important;
+  top: initial !important;
+  white-space: initial !important;
+  width: initial !important;
+}
+
+.webchat__live-region-activity .webchat__live-region-activity__timestamp {
+  display: none;
+}

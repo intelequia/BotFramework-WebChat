@@ -1,3 +1,4 @@
+import { hooks } from 'botframework-webchat-api';
 import {
   Composer as FilmComposer,
   createBasicStyleSet as createBasicStyleSetForReactFilm,
@@ -12,11 +13,11 @@ import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 
 import CarouselFilmStrip from './CarouselFilmStrip';
-import useDirection from '../hooks/useDirection';
-import useLocalizer from '../hooks/useLocalizer';
 import useNonce from '../hooks/internal/useNonce';
 import useStyleSet from '../hooks/useStyleSet';
 import useStyleToEmotionObject from '../hooks/internal/useStyleToEmotionObject';
+
+const { useDirection, useLocalizer } = hooks;
 
 const ROOT_STYLE = {
   '&.webchat__carousel-layout': {
@@ -43,6 +44,12 @@ const CarouselLayoutCore = ({
   const rightSideFlipper = direction === 'rtl' ? '<' : '>';
   const rootClassName = useStyleToEmotionObject()(ROOT_STYLE) + '';
 
+  const nextAlt = localize('CAROUSEL_FLIPPER_NEXT_ALT');
+  const previousAlt = localize('CAROUSEL_FLIPPER_PREVIOUS_ALT');
+
+  const leftFlipperAriaLabel = direction === 'rtl' ? nextAlt : previousAlt;
+  const rightFlipperAriaLabel = direction === 'rtl' ? previousAlt : nextAlt;
+
   return (
     <div
       className={classNames('webchat__carousel-layout', rootClassName, carouselFlipperStyleSet + '', filmRootClassName)}
@@ -58,10 +65,10 @@ const CarouselLayoutCore = ({
         />
         {scrollBarWidth !== '100%' && (
           <React.Fragment>
-            <Flipper aria-label={localize('CAROUSEL_FLIPPER_LEFT_ALT')} blurFocusOnClick={true} mode="left">
+            <Flipper aria-label={leftFlipperAriaLabel} blurFocusOnClick={true} mode="left">
               {leftSideFlipper}
             </Flipper>
-            <Flipper aria-label={localize('CAROUSEL_FLIPPER_RIGHT_ALT')} blurFocusOnClick={true} mode="right">
+            <Flipper aria-label={rightFlipperAriaLabel} blurFocusOnClick={true} mode="right">
               {rightSideFlipper}
             </Flipper>
           </React.Fragment>

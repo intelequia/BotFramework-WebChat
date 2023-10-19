@@ -35,7 +35,7 @@ test('video', async () => {
   await driver.sleep(4000);
 
   // Pause the video
-  await clickButton(driver, By.css('button[aria-label="Pause (k)"]'));
+  await clickButton(driver, By.css('button[title="Pause (k)"]'));
 
   // Jump back for 10 seconds, to get the buffering bar the same
   await driver.actions().sendKeys('j').perform();
@@ -56,6 +56,10 @@ test('video', async () => {
     const chromeBottom = document.querySelector('.ytp-chrome-bottom');
 
     chromeBottom && chromeBottom.setAttribute('hidden', 'hidden');
+
+    const doubleTapUI = document.querySelector('.ytp-doubletap-ui-legacy');
+
+    doubleTapUI && doubleTapUI.setAttribute('hidden', 'hidden');
 
     const tooltip = document.querySelector('.ytp-tooltip');
 

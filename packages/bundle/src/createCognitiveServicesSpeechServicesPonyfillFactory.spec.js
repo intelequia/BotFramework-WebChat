@@ -1,14 +1,30 @@
+/**
+ * @jest-environment jsdom
+ * @jest-environment-options { "customExportConditions": ["node"] }
+ *
+ * "uuid" resolved by jest-environment-jsdom use Web Crypto API.
+ * However, "jsdom" does not support Web Crypto API. Thus, we need to import packages as Node.js instead.
+ */
+/* eslint-disable prefer-destructuring */
+/* eslint-disable no-global-assign */
 let consoleWarns;
 let createCognitiveServicesSpeechServicesPonyfillFactory;
 let createPonyfill;
 let originalConsole;
 
-async function resolveFunctionOrValue(fnOrValue) {
-  return await (typeof fnOrValue === 'function' ? fnOrValue() : fnOrValue);
-}
-
 beforeEach(() => {
   jest.mock('web-speech-cognitive-services/lib/SpeechServices', () => jest.fn(() => ({})));
+  jest.mock('microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.browser/Exports', () => ({
+    ...jest.requireActual('microsoft-cognitiveservices-speech-sdk/distrib/lib/src/common.browser/Exports'),
+    PcmRecorder: class MockPcmRecorder {
+      // eslint-disable-next-line class-methods-use-this, no-empty-function
+      record() {}
+      // eslint-disable-next-line class-methods-use-this, no-empty-function
+      releaseMediaResources() {}
+      // eslint-disable-next-line class-methods-use-this, no-empty-function
+      setWorkletUrl() {}
+    }
+  }));
 
   originalConsole = console;
   consoleWarns = [];
@@ -19,176 +35,34 @@ beforeEach(() => {
   };
 
   createPonyfill = require('web-speech-cognitive-services/lib/SpeechServices');
-  createCognitiveServicesSpeechServicesPonyfillFactory = require('./createCognitiveServicesSpeechServicesPonyfillFactory')
-    .default;
+  createCognitiveServicesSpeechServicesPonyfillFactory =
+    require('./createCognitiveServicesSpeechServicesPonyfillFactory').default;
 
-  window.navigator.mediaDevices = {};
+  window.AudioContext = class MockAudioContext {
+    // eslint-disable-next-line class-methods-use-this
+    createMediaStreamSource() {
+      // eslint-disable-next-line no-empty-function
+      return { connect: () => {} };
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    createScriptProcessor() {
+      // eslint-disable-next-line no-empty-function
+      return { connect: () => {} };
+    }
+  };
+
+  window.navigator.mediaDevices = {
+    getUserMedia: jest.fn(() => ({
+      getAudioTracks: () => ['mock-media-stream-track']
+    }))
+  };
 });
 
 afterEach(() => {
   console = originalConsole;
 
   jest.resetModules();
-});
-
-test('upgrading string-based authorizationToken to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    authorizationToken: 'a1b2c3d',
-    region: 'westus2'
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    authorizationToken: 'a1b2c3d',
-    region: 'westus2'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
-});
-
-test('upgrading Promise-based authorizationToken to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    authorizationToken: (async () => 'a1b2c3d')(),
-    region: 'westus2'
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    authorizationToken: 'a1b2c3d',
-    region: 'westus2'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
-});
-
-test('upgrading function-based authorizationToken to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    authorizationToken: () => 'a1b2c3d',
-    region: 'westus2'
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    authorizationToken: 'a1b2c3d',
-    region: 'westus2'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
-});
-
-test('upgrading Promise function-based authorizationToken to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    authorizationToken: async () => 'a1b2c3d',
-    region: 'westus2'
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    authorizationToken: 'a1b2c3d',
-    region: 'westus2'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
-});
-
-test('upgrading string-based subscriptionKey to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    region: 'westus2',
-    subscriptionKey: 'a1b2c3d'
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    region: 'westus2',
-    subscriptionKey: 'a1b2c3d'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
-});
-
-test('upgrading string-based subscriptionKey to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    region: 'westus2',
-    subscriptionKey: (async () => 'a1b2c3d')()
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    region: 'westus2',
-    subscriptionKey: 'a1b2c3d'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
-});
-
-test('upgrading function-based subscriptionKey to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    region: 'westus2',
-    subscriptionKey: () => 'a1b2c3d'
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    region: 'westus2',
-    subscriptionKey: 'a1b2c3d'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
-});
-
-test('upgrading Promise function-based subscriptionKey to credentials', async () => {
-  const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
-    region: 'westus2',
-    subscriptionKey: async () => 'a1b2c3d'
-  });
-
-  ponyfillFactory();
-
-  const { credentials } = createPonyfill.mock.calls[0][0];
-
-  await expect(resolveFunctionOrValue(credentials)).resolves.toEqual({
-    region: 'westus2',
-    subscriptionKey: 'a1b2c3d'
-  });
-
-  expect(consoleWarns[0]).toMatchInlineSnapshot(
-    `"botframework-webchat: \\"authorizationToken\\", \\"region\\", and \\"subscriptionKey\\" are deprecated and will be removed on or after 2020-12-17. Please use \\"credentials\\" instead."`
-  );
 });
 
 test('providing reference grammar ID', () => {
@@ -221,7 +95,8 @@ test('not providing reference grammar ID', () => {
   expect(referenceGrammars).toEqual([]);
 });
 
-test('supplying audioInputDeviceId', () => {
+test('supplying audioInputDeviceId', async () => {
+  // GIVEN: Set up Web Speech with "audioInputDeviceId" of "audio-input-device-1".
   const ponyfillFactory = createCognitiveServicesSpeechServicesPonyfillFactory({
     audioInputDeviceId: 'audio-input-device-1',
     credentials: {
@@ -230,9 +105,20 @@ test('supplying audioInputDeviceId', () => {
     }
   });
 
+  // WHEN: Polyfill is created.
   ponyfillFactory({});
 
-  expect(createPonyfill.mock.calls[0][0]).toHaveProperty('audioConfig.privSource.deviceId', 'audio-input-device-1');
+  // WHEN: Audio source is attached and audio device is opened.
+  await createPonyfill.mock.calls[0][0].audioConfig.privSource.attach();
+
+  // THEN: It should call getUserMedia() with "audio" constraints of { deviceId: 'audio-input-device-1' }.
+  expect(window.navigator.mediaDevices.getUserMedia.mock.calls[0][0]).toHaveProperty(
+    'audio.deviceId',
+    'audio-input-device-1'
+  );
+
+  // THEN: It should call getUserMedia() with "video" constraint of false.
+  expect(window.navigator.mediaDevices.getUserMedia.mock.calls[0][0]).toHaveProperty('video', false);
 });
 
 test('supplying both audioConfig and audioInputDeviceId', () => {
