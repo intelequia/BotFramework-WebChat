@@ -2,11 +2,11 @@ const {
   createServer,
   plugins: { queryParser, serveStatic }
 } = require('restify');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const { join } = require('path');
 const fetch = require('node-fetch');
-const proxy = require('http-proxy-middleware');
 
-const { PORT = 5000 } = process.env;
+const { PORT = 5002 } = process.env;
 const server = createServer();
 
 server.use(queryParser());
@@ -37,6 +37,6 @@ server.get('/', async (req, res, next) => {
   })(req, res, next);
 });
 
-server.get('/embed/*/config', proxy({ changeOrigin: true, target: 'https://webchat.botframework.com/' }));
+server.get('/embed/*/config', createProxyMiddleware({ changeOrigin: true, target: 'https://webchat.botframework.com/' }));
 
 server.listen(PORT, () => console.log(`Embed dev server is listening to port ${PORT}`));

@@ -1,3 +1,6 @@
+/* eslint no-magic-numbers: "off" */
+/* eslint no-undef: "off" */
+
 import { imageSnapshotOptions, timeouts } from './constants.json';
 
 import allImagesLoaded from './setup/conditions/allImagesLoaded';
@@ -12,7 +15,26 @@ jest.setTimeout(timeouts.test);
 describe('upload a picture', () => {
   test('', async () => {
     const { driver, pageObjects } = await setupWebDriver({
-      // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+      props: {
+        onTelemetry: event => {
+          const { data, dimensions, duration, error, fatal, name, type, value } = event;
+
+          window.WebChatTest.telemetryMeasurements.push({
+            data,
+            dimensions,
+            duration,
+            error,
+            fatal,
+            name,
+            type,
+            value
+          });
+        }
+      },
+      setup: () => {
+        window.WebChatTest.telemetryMeasurements = [];
+      },
+      // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
       useProductionBot: true
     });
 
@@ -21,6 +43,90 @@ describe('upload a picture', () => {
     await pageObjects.sendFile('seaofthieves.jpg');
     await driver.wait(minNumActivitiesShown(2), timeouts.directLine);
     await driver.wait(allImagesLoaded(), timeouts.fetchImage);
+
+    const telemetryMeasurements = await driver.executeScript(() =>
+      window.WebChatTest.telemetryMeasurements.filter(({ name }) =>
+        ['init', 'sendFiles', 'sendFiles:makeThumbnail'].includes(name)
+      )
+    );
+
+    expect(telemetryMeasurements).toHaveProperty('length', 4);
+    expect(telemetryMeasurements[2]).toHaveProperty('name', 'sendFiles:makeThumbnail');
+    expect(telemetryMeasurements[2]).toHaveProperty('type', 'timingend');
+
+    telemetryMeasurements[2].duration = 1000;
+
+    expect(telemetryMeasurements).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": null,
+          "dimensions": Object {
+            "capability:downscaleImage:workerType": "web worker",
+            "capability:renderer": "html",
+            "prop:locale": "en-US",
+            "prop:speechRecognition": "false",
+            "prop:speechSynthesis": "false",
+          },
+          "duration": null,
+          "error": null,
+          "fatal": null,
+          "name": "init",
+          "type": "event",
+          "value": null,
+        },
+        Object {
+          "data": null,
+          "dimensions": Object {
+            "capability:downscaleImage:workerType": "web worker",
+            "capability:renderer": "html",
+            "prop:locale": "en-US",
+            "prop:speechRecognition": "false",
+            "prop:speechSynthesis": "false",
+          },
+          "duration": null,
+          "error": null,
+          "fatal": null,
+          "name": "sendFiles:makeThumbnail",
+          "type": "timingstart",
+          "value": null,
+        },
+        Object {
+          "data": null,
+          "dimensions": Object {
+            "capability:downscaleImage:workerType": "web worker",
+            "capability:renderer": "html",
+            "prop:locale": "en-US",
+            "prop:speechRecognition": "false",
+            "prop:speechSynthesis": "false",
+          },
+          "duration": 1000,
+          "error": null,
+          "fatal": null,
+          "name": "sendFiles:makeThumbnail",
+          "type": "timingend",
+          "value": null,
+        },
+        Object {
+          "data": Object {
+            "numFiles": 1,
+            "sumSizeInKB": 379,
+          },
+          "dimensions": Object {
+            "capability:downscaleImage:workerType": "web worker",
+            "capability:renderer": "html",
+            "prop:locale": "en-US",
+            "prop:speechRecognition": "false",
+            "prop:speechSynthesis": "false",
+          },
+          "duration": null,
+          "error": null,
+          "fatal": null,
+          "name": "sendFiles",
+          "type": "event",
+          "value": null,
+        },
+      ]
+    `);
 
     const base64PNG = await driver.takeScreenshot();
 
@@ -36,7 +142,7 @@ describe('upload a picture', () => {
           uploadThumbnailWidth: 120
         }
       },
-      // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+      // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
       useProductionBot: true
     });
 
@@ -58,7 +164,7 @@ describe('upload a picture', () => {
           uploadThumbnailQuality: 0.1
         }
       },
-      // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+      // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
       useProductionBot: true
     });
 
@@ -80,7 +186,7 @@ describe('upload a picture', () => {
           enableUploadThumbnail: false
         }
       },
-      // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+      // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
       useProductionBot: true
     });
 
@@ -98,7 +204,7 @@ describe('upload a picture', () => {
   describe('without Web Worker', () => {
     test('', async () => {
       const { driver, pageObjects } = await setupWebDriver({
-        // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+        // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
         useProductionBot: true
       });
 
@@ -125,7 +231,7 @@ describe('upload a picture', () => {
             uploadThumbnailWidth: 120
           }
         },
-        // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+        // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
         useProductionBot: true
       });
 
@@ -150,7 +256,7 @@ describe('upload a picture', () => {
             uploadThumbnailQuality: 0.1
           }
         },
-        // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+        // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
         useProductionBot: true
       });
 
@@ -172,13 +278,30 @@ describe('upload a picture', () => {
 
 test('upload a ZIP file', async () => {
   const { driver, pageObjects } = await setupWebDriver({
-    // TODO: [P3] Offline bot did not reply with a downloadable attachment, we need to use production bot
+    // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
     useProductionBot: true
   });
 
   await driver.wait(uiConnected(), timeouts.directLine);
 
   await pageObjects.sendFile('empty.zip');
+  await driver.wait(minNumActivitiesShown(2), timeouts.directLine);
+  await driver.wait(allImagesLoaded(), timeouts.fetchImage);
+
+  const base64PNG = await driver.takeScreenshot();
+
+  expect(base64PNG).toMatchImageSnapshot(imageSnapshotOptions);
+});
+
+test('upload a .txt (plain) file', async () => {
+  const { driver, pageObjects } = await setupWebDriver({
+    // TODO: [P3] Offline bot did not reply with a downloadable attachment, so we need to use production bot
+    useProductionBot: true
+  });
+
+  await driver.wait(uiConnected(), timeouts.directLine);
+
+  await pageObjects.sendFile('empty.txt');
   await driver.wait(minNumActivitiesShown(2), timeouts.directLine);
   await driver.wait(allImagesLoaded(), timeouts.fetchImage);
 

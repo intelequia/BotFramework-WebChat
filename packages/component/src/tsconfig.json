@@ -3,11 +3,17 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "declarationDir": "../lib",
+    "declarationMap": true,
+    "downlevelIteration": true,
     "emitDeclarationOnly": true,
-    "isolatedModules": true,
     "jsx": "react",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "preserveWatchOutput": true,
     "pretty": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "target": "ESNext"
+  },
+  "files": ["index.ts"]
 }

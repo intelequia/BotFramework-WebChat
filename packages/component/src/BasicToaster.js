@@ -1,6 +1,7 @@
 /* eslint no-magic-numbers: ["error", { "ignore": [0, 1, 2, 3, 4, 5] }] */
 /* eslint react/forbid-dom-props: "off" */
 
+import { hooks } from 'botframework-webchat-api';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -8,11 +9,10 @@ import CollapseIcon from './Toast/CollapseIcon';
 import ExpandIcon from './Toast/ExpandIcon';
 import NotificationIcon from './Toast/NotificationIcon';
 import randomId from './Utils/randomId';
-import useDebouncedNotifications from './hooks/useDebouncedNotifications';
-import useLocalizer from './hooks/useLocalizer';
-import useRenderToast from './hooks/useRenderToast';
 import useStyleSet from './hooks/useStyleSet';
 import useStyleToEmotionObject from './hooks/internal/useStyleToEmotionObject';
+
+const { useDebouncedNotifications, useLocalizer, useRenderToast } = hooks;
 
 const ROOT_STYLE = {
   display: 'flex',
@@ -40,8 +40,12 @@ const LEVEL_AS_NUMBER = {
   success: 4
 };
 
+const LEVEL_AS_NUMBER_KEYS = Object.keys(LEVEL_AS_NUMBER);
+
 function getLevelAsNumber(level) {
-  return LEVEL_AS_NUMBER[level] || 5;
+  // Mitigated through allowlisting.
+  // eslint-disable-next-line security/detect-object-injection
+  return LEVEL_AS_NUMBER_KEYS.includes(level) ? LEVEL_AS_NUMBER[level] : 5;
 }
 
 function compareLevel(x, y) {
@@ -94,10 +98,10 @@ const BasicToaster = () => {
     () => (!expandable || expanded ? `webchat__toaster__list__${instanceId}` : undefined),
     [expandable, expanded, instanceId]
   );
-  const headerElementId = useMemo(() => (expandable ? `webchat__toaster__header__${instanceId}` : undefined), [
-    expandable,
-    instanceId
-  ]);
+  const headerElementId = useMemo(
+    () => (expandable ? `webchat__toaster__header__${instanceId}` : undefined),
+    [expandable, instanceId]
+  );
 
   useEffect(() => {
     !expandable && setExpanded(false);
@@ -144,13 +148,13 @@ const BasicToaster = () => {
         </button>
       )}
       {(!expandable || expanded) && (
-        <ul aria-labelledby={headerElementId} className="webchat__toaster__list" id={expandableElementId} role="region">
+        <div aria-labelledby={headerElementId} className="webchat__toaster__list" id={expandableElementId}>
           {sortedNotificationsWithChildren.map(({ children, notification: { id } }) => (
-            <li aria-atomic={true} className="webchat__toaster__listItem" key={id} role="none">
+            <div aria-atomic={true} className="webchat__toaster__listItem" key={id}>
               {children}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

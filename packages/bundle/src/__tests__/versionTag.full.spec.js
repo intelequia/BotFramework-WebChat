@@ -1,3 +1,6 @@
+/** @jest-environment jsdom */
+/* globals process */
+
 process.env.npm_package_version = '0.0.0-test';
 
 describe('loading Web Chat', () => {

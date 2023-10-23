@@ -108,7 +108,7 @@ Here is the finished `index.html`:
     <title>Web Chat: Full-featured bundle</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--
-      This CDN points to the latest official release of Web Chat. If you need to test against Web Chat's latest bits, please refer to pointing to Web Chat's MyGet feed:
+      This CDN points to the latest official release of Web Chat. If you need to test against Web Chat's latest bits, please refer to using Web Chat's latest bits:
       https://github.com/microsoft/BotFramework-WebChat#how-to-test-with-web-chats-latest-bits
     -->
     <script crossorigin="anonymous" src="../../../\packages\bundle\dist\webchat.js"></script>
@@ -158,4 +158,4 @@ Here is the finished `index.html`:
 
 ## Full list of Web Chat hosted samples
 
-View the list of [available Web Chat samples](https://github.com/microsoft/BotFramework-WebChat/tree/master/samples)
+View the list of [available Web Chat samples](https://github.com/microsoft/BotFramework-WebChat/tree/main/samples)

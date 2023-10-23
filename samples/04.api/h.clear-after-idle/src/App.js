@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
 import ReactWebChat, { createDirectLine, createStore } from 'botframework-webchat';
-
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Countdown from './Countdown';
 import useTimeoutAt from './utils/useTimeoutAt';
@@ -13,7 +12,7 @@ const IDLE_TIMEOUT = 30000;
 // and to understand the risks associated with using secrets, visit
 // https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-direct-line-3-0-authentication?view=azure-bot-service-4.0
 async function fetchToken() {
-  const res = await fetch('https://webchat-mockbot2.azurewebsites.net/api/token/directline', { method: 'POST' });
+  const res = await fetch('https://webchat-mockbot3.azurewebsites.net/api/directline/token', { method: 'POST' });
   const { token } = await res.json();
 
   return token;
@@ -26,7 +25,7 @@ function App() {
   const initConversation = useCallback(() => {
     setSession(false);
 
-    (async function() {
+    (async function () {
       const token = await fetchToken();
       const key = Date.now();
 
