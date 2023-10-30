@@ -426,3 +426,28 @@
   }
 }
 
+.streamingChat{
+  padding: 15px;
+  overflow: auto;
+}
+.streamingChat p{
+  margin: 15px;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #dbdee1;
+}
+.streamingMessage{
+  background: rgb(241, 241, 244);
+  border-color: rgb(230, 230, 230);
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 1px;
+  color: rgb(87, 90, 94);
+  min-height: 38px;
+}
+.webChatNone{
+  display: none !important;
+}

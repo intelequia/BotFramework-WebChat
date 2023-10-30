@@ -26,9 +26,9 @@ const MinimizableWebChat = parameters => {
   const store = useMemo(
     () =>
       createStore({}, ({ dispatch }) => next => action => {
+        console.log(action);
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
           inTimeout = false;
-
           dispatch({
             type: 'WEB_CHAT/SEND_EVENT',
             payload: {
@@ -64,8 +64,10 @@ const MinimizableWebChat = parameters => {
               case 'Minimize':
                 setMinimized(true);
                 setNewMessage(false);
+                break;
               case 'ChangeLanguage':
                 setLanguage(action.payload.activity.value);
+                break;
               case 'Geolocation':
                 if (navigator.geolocation) {
                   function success(pos) {
@@ -84,13 +86,20 @@ const MinimizableWebChat = parameters => {
                     });
                   }
                   navigator.geolocation.getCurrentPosition(success);
+                  break;
                 }
-              case 'ToogleStreaming':
-                setStreaming(action.payload.activity.value);
               case 'StreamingInfo':
-                console.log(options);
-                console.log(action.payload.activity.value);
-                setStreamingText(action.payload.activity.value);
+                console.log('StreamingInfo', action.payload);
+                if (typeof action.payload.activity.value !== 'boolean') {
+                  setStreamingText(action.payload.activity.value);
+                }
+                break;
+
+              case 'ToogleStreaming':
+                console.log('ToogleStreaming', action.payload);
+                setStreamingText('');
+                setStreaming(action.payload.activity.value);
+                break;
             }
           }
         } else if (action.type === 'WEB_CHAT/SEND_MESSAGE') {
@@ -172,7 +181,7 @@ const MinimizableWebChat = parameters => {
   const [language, setLanguage] = useState();
 
   const [streaming, setStreaming] = useState(false);
-  const [streamingText, setStreamingText] = useState();
+  const [streamingText, setStreamingText] = useState('');
 
   // To learn about reconnecting to a conversation, see the following documentation:
   // https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-direct-line-3-0-reconnect-to-conversation?view=azure-bot-service-4.0
@@ -272,14 +281,6 @@ const MinimizableWebChat = parameters => {
     else return null;
   }, []);
 
-  const handleTest = useCallback(() => {
-    if (streaming == true) {
-      setStreaming(false);
-    } else {
-      setStreaming(true);
-    }
-  }, [streaming]);
-
   return (
     <div className="minimizable-web-chat">
       {getCookie('firstTimeVisit') == 'true' &&
@@ -317,39 +318,23 @@ const MinimizableWebChat = parameters => {
             headerOptions={options.header}
           />
 
-          <button text="BUTTON" onClick={handleTest} />
-          <div hidden={!streaming} className="markdown webchat--css-vhrtn-1idpc0m">
-            <ReactMarkdown>{streamingText}</ReactMarkdown>
-            <ReactMarkdown>
-              Como asistente virtual, puedo proporcionarte información sobre una variedad de temas relacionados con el
-              turismo en Tenerife, incluyendo: 1. **Alojamiento**: Puedo proporcionarte información sobre hoteles,
-              apartamentos, casas rurales y otros tipos de alojamiento disponibles en Tenerife. 2. **Actividades**:
-              Puedo informarte sobre las diversas actividades que puedes realizar en Tenerife, como senderismo,
-              ciclismo, buceo, surf, golf, etc. 3. **Atracciones turísticas**: Puedo proporcionarte detalles sobre las
-              diversas atracciones turísticas de Tenerife, como el Parque Nacional del Teide, la ciudad de Santa Cruz de
-              Tenerife, la playa de Las Teresitas, etc. 4. **Gastronomía**: Puedo informarte sobre la deliciosa
-              gastronomía de Tenerife, incluyendo los platos típicos que debes probar y los mejores lugares para comer.
-              5. **Eventos**: Puedo mantenerte al día con los próximos eventos en Tenerife, como festivales, conciertos,
-              exposiciones, etc. 6. **Transporte**: Puedo proporcionarte información sobre cómo moverte por Tenerife,
-              incluyendo detalles sobre el servicio de autobuses, taxis, alquiler de coches, etc. 7. **Información
-              práctica**: Puedo proporcionarte información práctica para tu viaje a Tenerife, como el clima, la moneda,
-              los servicios de emergencia, etc. Por favor, ten en cuenta que toda la información que proporciono está
-              basada en los datos disponibles en la página web www.webtenerife.com.
-            </ReactMarkdown>
-            ;
+          <WebChat
+            style={{ display: streaming ? 'none !important' : 'block' }}
+            className={classNames(streaming ? 'webChatNone' : '', 'react-web-chat')}
+            onFetchToken={handleFetchToken}
+            store={store}
+            styleOptions={styleSet}
+            token={token}
+            webSpeechPonyfillFactory={webSpeechPonyfillFactory}
+            language={language}
+            selectVoice={options.selectVoice}
+          />
+
+          <div hidden={!streaming} className="streamingChat">
+            <div className="streamingMessage">
+              <ReactMarkdown>{streamingText}</ReactMarkdown>
+            </div>
           </div>
-          {
-            <WebChat
-              className="react-web-chat"
-              onFetchToken={handleFetchToken}
-              store={store}
-              styleOptions={styleSet}
-              token={token}
-              webSpeechPonyfillFactory={webSpeechPonyfillFactory}
-              language={language}
-              selectVoice={options.selectVoice}
-            />
-          }
 
           {options.brandMessage != undefined && options.brandMessage != '' && (
             <div className="brandmessage">{options.brandMessage}</div>
