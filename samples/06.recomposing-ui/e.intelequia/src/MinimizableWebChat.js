@@ -26,7 +26,6 @@ const MinimizableWebChat = parameters => {
   const store = useMemo(
     () =>
       createStore({}, ({ dispatch }) => next => action => {
-        console.log(action);
         if (action.type === 'DIRECT_LINE/CONNECT_FULFILLED') {
           inTimeout = false;
           dispatch({
@@ -89,14 +88,12 @@ const MinimizableWebChat = parameters => {
                   break;
                 }
               case 'StreamingInfo':
-                console.log('StreamingInfo', action.payload);
                 if (typeof action.payload.activity.value !== 'boolean') {
                   setStreamingText(action.payload.activity.value);
                 }
                 break;
 
               case 'ToogleStreaming':
-                console.log('ToogleStreaming', action.payload);
                 setStreamingText('');
                 setStreaming(action.payload.activity.value);
                 break;
