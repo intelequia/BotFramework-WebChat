@@ -88,14 +88,18 @@ const MinimizableWebChat = parameters => {
                   break;
                 }
               case 'StreamingInfo':
-                if (typeof action.payload.activity.value !== 'boolean') {
-                  setStreamingText(action.payload.activity.value);
+                if (Date.now() - Date.parse(action.payload.activity.timestamp) <= 120000) {
+                  if (typeof action.payload.activity.value !== 'boolean') {
+                    setStreamingText(action.payload.activity.value);
+                  }
                 }
                 break;
 
               case 'ToogleStreaming':
-                setStreamingText('');
-                setStreaming(action.payload.activity.value);
+                if (Date.now() - Date.parse(action.payload.activity.timestamp) <= 120000) {
+                  setStreamingText('');
+                  setStreaming(action.payload.activity.value);
+                }
                 break;
             }
           }
