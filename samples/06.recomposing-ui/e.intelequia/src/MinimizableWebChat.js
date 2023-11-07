@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createStore, createCognitiveServicesSpeechServicesPonyfillFactory } from 'botframework-webchat';
 import WebChat from './WebChat';
 import Header from './Header';
@@ -8,6 +8,8 @@ import './fabric-icons-inline.css';
 import './MinimizableWebChat.css';
 import { setCookie, getCookie, checkCookie } from './CookiesUtils';
 import ReactMarkdown from 'react-markdown';
+import getCancelStream from './LocalizedString/StringStreaming';
+import TypingAnimation from './Components/TypingAnimation';
 
 //create your forceUpdate hook
 function useForceUpdate() {
@@ -22,7 +24,6 @@ const MinimizableWebChat = parameters => {
   if (options.reactivateChat && options.proactiveTimeOut == undefined) {
     options.proactiveTimeOut = 50000;
   }
-
   const store = useMemo(
     () =>
       createStore({}, ({ dispatch }) => next => action => {
@@ -37,6 +38,10 @@ const MinimizableWebChat = parameters => {
               }
             }
           });
+          setStreaming(true);
+          setStreamingText(
+            'Intentaré descifrar tus intenciones. Aún así, trata de hablar conmigo con frases cortas, como: “playas del norte”, “tiempo en Adeje”, “Qué hacer”, “qué visitar”. Si quieres cambiar de idioma puedes decir “cambiar idioma”Para ver más frases de ejemplo, escribe .Intentaré descifrar tus intenciones. Aún así, trata de hablar conmigo con frases cortas, como: “playas del norte”, “tiempo en Adeje”, “Qué hacer”, “qué visitar”. Si quieres cambiar de idioma puedes decir “cambiar idioma”Para ver más frases de ejemplo, escribe .Intentaré descifrar tus intenciones. Aún así, trata de hablar conmigo con frases cortas, como: “playas del norte”, “tiempo en Adeje”, “Qué hacer”, “qué visitar”. Si quieres cambiar de idioma puedes decir “cambiar idioma”Para ver más frases de ejemplo, escribe .'
+          );
         } else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
           if (action.payload.activity.from.role === 'bot') {
             setNewMessage(true);
@@ -127,6 +132,16 @@ const MinimizableWebChat = parameters => {
     []
   );
 
+  const handleCancelStream = () => {
+    store.dispatch({
+      type: 'WEB_CHAT/SEND_EVENT',
+      payload: {
+        name: 'StopStreaming',
+        value: true
+      }
+    });
+    setStreaming(false);
+  };
   var styleSet = {
     fontSizeSmall: '80%',
     primaryFont: "'Segoe UI', sans-serif",
@@ -318,7 +333,6 @@ const MinimizableWebChat = parameters => {
             handleSwitchButtonClick={handleSwitchButtonClick}
             headerOptions={options.header}
           />
-
           <WebChat
             style={{ display: streaming ? 'none !important' : 'block' }}
             className={classNames(streaming ? 'webChatNone' : '', 'react-web-chat')}
@@ -332,8 +346,22 @@ const MinimizableWebChat = parameters => {
           />
 
           <div hidden={!streaming} className="streamingChat">
-            <div className="streamingMessage">
-              <ReactMarkdown>{streamingText}</ReactMarkdown>
+            <div className="chatContainer">
+              <div className="chatImageDiv">
+                <img className="chatImage" src={options.style.botAvatarImage}></img>
+              </div>
+              <div className="streamingMessage">
+                <div className="streamingChatLoadig">
+                  <ReactMarkdown>{streamingText}</ReactMarkdown>
+                  <TypingAnimation></TypingAnimation>
+                </div>
+              </div>
+            </div>
+            <div className="buttonContainer">
+              {console.log(options.style)}
+              <button className="cancelButton" onClick={handleCancelStream}>
+                {getCancelStream(window.navigator.language)}
+              </button>
             </div>
           </div>
 
