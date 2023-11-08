@@ -518,7 +518,6 @@
 }
 
 @keyframes typing {
-
   0%,
   50%{
     opacity: 0.5;
@@ -532,10 +531,10 @@
   }
 }
 @media (min-width: 470px) and (min-height: 600px){
-  .streamingChat{
+  .streamingChatContainer{
     width: auto !important;
   }
 }
-.streamingChat{
+.streamingChatContainer{
   width: 65%;
 }

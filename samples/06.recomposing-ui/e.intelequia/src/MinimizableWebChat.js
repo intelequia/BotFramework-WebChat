@@ -38,10 +38,6 @@ const MinimizableWebChat = parameters => {
               }
             }
           });
-          setStreaming(true);
-          setStreamingText(
-            'Intentaré descifrar tus intenciones. Aún así, trata de hablar conmigo con frases cortas, como: “playas del norte”, “tiempo en Adeje”, “Qué hacer”, “qué visitar”. Si quieres cambiar de idioma puedes decir “cambiar idioma”Para ver más frases de ejemplo, escribe .Intentaré descifrar tus intenciones. Aún así, trata de hablar conmigo con frases cortas, como: “playas del norte”, “tiempo en Adeje”, “Qué hacer”, “qué visitar”. Si quieres cambiar de idioma puedes decir “cambiar idioma”Para ver más frases de ejemplo, escribe .Intentaré descifrar tus intenciones. Aún así, trata de hablar conmigo con frases cortas, como: “playas del norte”, “tiempo en Adeje”, “Qué hacer”, “qué visitar”. Si quieres cambiar de idioma puedes decir “cambiar idioma”Para ver más frases de ejemplo, escribe .'
-          );
         } else if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
           if (action.payload.activity.from.role === 'bot') {
             setNewMessage(true);
@@ -93,7 +89,7 @@ const MinimizableWebChat = parameters => {
                   break;
                 }
               case 'StreamingInfo':
-                if (Date.now() - Date.parse(action.payload.activity.timestamp) <= 120000) {
+                if (Date.now() - Date.parse(action.payload.activity.timestamp) <= 60000) {
                   if (typeof action.payload.activity.value !== 'boolean') {
                     setStreamingText(action.payload.activity.value);
                   }
@@ -101,7 +97,7 @@ const MinimizableWebChat = parameters => {
                 break;
 
               case 'ToogleStreaming':
-                if (Date.now() - Date.parse(action.payload.activity.timestamp) <= 120000) {
+                if (Date.now() - Date.parse(action.payload.activity.timestamp) <= 60000) {
                   setStreamingText('');
                   setStreaming(action.payload.activity.value);
                 }
@@ -346,22 +342,24 @@ const MinimizableWebChat = parameters => {
           />
 
           <div hidden={!streaming} className="streamingChat">
-            <div className="chatContainer">
-              <div className="chatImageDiv">
-                <img className="chatImage" src={options.style.botAvatarImage}></img>
-              </div>
-              <div className="streamingMessage">
-                <div className="streamingChatLoadig">
-                  <ReactMarkdown>{streamingText}</ReactMarkdown>
-                  <TypingAnimation></TypingAnimation>
+            <div className="streamingChatContainer">
+              <div className="chatContainer">
+                <div className="chatImageDiv">
+                  <img className="chatImage" src={options.style.botAvatarImage}></img>
+                </div>
+                <div className="streamingMessage">
+                  <div className="streamingChatLoadig">
+                    <ReactMarkdown>{streamingText}</ReactMarkdown>
+                    <TypingAnimation></TypingAnimation>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="buttonContainer">
-              {console.log(options.style)}
-              <button className="cancelButton" onClick={handleCancelStream}>
-                {getCancelStream(window.navigator.language)}
-              </button>
+              <div className="buttonContainer">
+                {console.log(options.style)}
+                <button className="cancelButton" onClick={handleCancelStream}>
+                  {getCancelStream(window.navigator.language)}
+                </button>
+              </div>
             </div>
           </div>
 
