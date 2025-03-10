@@ -10,6 +10,8 @@ import { setCookie, getCookie, checkCookie } from './CookiesUtils';
 import ReactMarkdown from 'react-markdown';
 import getCancelStream from './LocalizedString/StringStreaming';
 import TypingAnimation from './Components/TypingAnimation';
+import { CallClient, CallAgent, TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 
 //create your forceUpdate hook
 function useForceUpdate() {
@@ -24,6 +26,22 @@ const MinimizableWebChat = parameters => {
   if (options.reactivateChat && options.proactiveTimeOut == undefined) {
     options.proactiveTimeOut = 50000;
   }
+  async function joinTeamsCall(token, teamsMeetingLink) {
+    const credential = new AzureCommunicationTokenCredential(token);
+
+    const callClient = new CallClient();
+    
+    const callAgent = await callClient.createCallAgent(credential);
+
+    const teamsMeetingLinkLocator = {
+        meetingLink: teamsMeetingLink
+    };
+
+    const call = callAgent.join(teamsMeetingLinkLocator);
+
+    console.log('Unido a la llamada de Teams:', call);
+}
+
   const store = useMemo(
     () =>
       createStore({}, ({ dispatch }) => next => action => {
@@ -95,7 +113,13 @@ const MinimizableWebChat = parameters => {
                   }
                 }
                 break;
+              case 'AzureCommunicationCall':
+                const token = action.payload.activity.value;
+                const teamsMeetingLink = 'https://teams.microsoft.com/l/meetup-join/19%3ameeting_NmJiYTg5MTgtNDg4Mi00MDkzLWFiMmUtNDdjYzljYjkzNDhj%40thread.v2/0?context=%7b%22Tid%22%3a%22f6673b7a-4e0a-44f1-8894-a3e601fc53d9%22%2c%22Oid%22%3a%22241ae345-22dc-4f70-88a4-cf53056935b3%22%7d';
+                console.log('Connected to DirectLine');
 
+                joinTeamsCall(token, teamsMeetingLink);
+                break;
               case 'ToogleStreaming':
                 if (Date.now() - Date.parse(action.payload.activity.timestamp) <= 60000) {
                   setStreamingText('');
