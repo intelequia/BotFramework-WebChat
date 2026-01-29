@@ -342,7 +342,7 @@ const MinimizableWebChat = parameters => {
           />
 
           <div hidden={!streaming} className="streamingChat">
-            <div className="streamingChatContainer">
+              <div className="streamingChatContainer">
               <div className="chatContainer">
                 <div className="chatImageDiv">
                   <img className="chatImage" src={options.style.botAvatarImage}></img>
@@ -355,16 +355,17 @@ const MinimizableWebChat = parameters => {
                 </div>
               </div>
               <div className="buttonContainer">
-                {console.log(options.style)}
                 <button className="cancelButton" onClick={handleCancelStream}>
                   {getCancelStream(window.navigator.language)}
                 </button>
               </div>
+              </div>
             </div>
-          </div>
 
-          {options.brandMessage != undefined && options.brandMessage != '' && (
-            <div className="brandmessage">{options.brandMessage}</div>
+          {!streaming && options.brandMessage != undefined && options.brandMessage != '' && (
+            <div className="brandmessage">
+              <ReactMarkdown>{options.brandMessage}</ReactMarkdown>
+            </div>
           )}
         </div>
       )}
